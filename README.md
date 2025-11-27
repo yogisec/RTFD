@@ -1,6 +1,6 @@
 # doc-mcp
 
-Model Context Protocol server that acts as a gateway for coding agents to pull library documentation and related context. It queries Google (HTML scrape), GitHub search APIs, and PyPI metadata to surface relevant docs in one place.
+Model Context Protocol server that acts as a gateway for coding agents to pull library documentation and related context. It queries Google (HTML scrape), GitHub search APIs, PyPI metadata, and GoDocs to surface relevant docs in one place.
 
 ## Quickstart
 
@@ -19,11 +19,12 @@ Model Context Protocol server that acts as a gateway for coding agents to pull l
    ```
 
 The server exposes MCP tools (all responses returned in TOON format for token efficiency):
-- `search_library_docs(library, limit=5)`: Combined lookup using PyPI, GitHub, and Google.
+- `search_library_docs(library, limit=5)`: Combined lookup using PyPI, GoDocs, GitHub, and Google.
 - `google_search(query, limit=5)`: General Google card scrape (no API key).
 - `github_repo_search(query, limit=5, language="Python")`
 - `github_code_search(query, repo=None, limit=5)`
 - `pypi_metadata(package)`
+- `godocs_metadata(package)`: Retrieve Go package documentation metadata from godocs.io.
 - `google_search(query, limit=5, use_api=False)` – set `use_api=True` plus `GOOGLE_API_KEY` and `GOOGLE_CSE_ID` env vars to use Google Custom Search; otherwise it scrapes HTML.
 
 ## Notes
