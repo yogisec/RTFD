@@ -120,15 +120,19 @@ class ZigProvider(BaseProvider):
     ) -> list[Dict[str, Any]]:
         """Search sections for matches based on query string."""
         matches = []
+        query_words = query.lower().split()
 
         for section in sections:
             title_lower = section["title"].lower()
             summary_lower = section["summary"].lower()
 
-            # Score based on matches
-            title_score = title_lower.count(query)
-            summary_score = summary_lower.count(query)
-            total_score = (title_score * 2) + summary_score  # Weight title matches higher
+            # Score based on word matches (individual words from query)
+            total_score = 0
+            for word in query_words:
+                # Title matches are weighted higher
+                title_score = title_lower.count(word)
+                summary_score = summary_lower.count(word)
+                total_score += (title_score * 2) + summary_score
 
             if total_score > 0:
                 matches.append(
