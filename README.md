@@ -1,10 +1,10 @@
 # ![RTFD Logo](logo.png) RTFD (Read The F*****g Docs)
 
-Model Context Protocol (MCP) server that acts as a gateway for coding agents to pull library documentation and related context. It queries Google (HTML scrape), GitHub search APIs, PyPI metadata, GoDocs, Zig documentation, and crates.io to surface relevant docs in one place.
+Model Context Protocol (MCP) server that acts as a gateway for coding agents to pull library documentation and related context. It queries Google (HTML scrape), GitHub search APIs, PyPI, npm, crates.io, GoDocs, and Zig documentation to surface relevant docs in one place.
 
 **Features:**
 - **Pluggable Architecture**: Easily add new documentation providers by creating a single provider module
-- **Multi-Source Search**: Aggregates results from PyPI, crates.io, GoDocs, Zig docs, GitHub repositories, GitHub code, and Google
+- **Multi-Source Search**: Aggregates results from PyPI, npm, crates.io, GoDocs, Zig docs, GitHub repositories, GitHub code, and Google
 - **Token Efficient**: All responses serialized in TOON format (~30% smaller than JSON)
 - **Error Resilient**: Provider failures are isolated; one API failure doesn't crash the server
 - **Auto-Discovery**: New providers are automatically discovered and registered
@@ -34,6 +34,7 @@ All tool responses are returned in **TOON format** for token efficiency.
 
 **Individual Providers:**
 - `pypi_metadata(package)`: Fetch Python package metadata from PyPI
+- `npm_metadata(package)`: Fetch JavaScript package metadata from npm
 - `crates_metadata(crate)`: Get Rust crate metadata from crates.io
 - `search_crates(query, limit=5)`: Search Rust crates on crates.io
 - `godocs_metadata(package)`: Retrieve Go package documentation from godocs.io
@@ -75,7 +76,7 @@ Or, if you want to run it with a specific environment (e.g., with a GitHub token
 }
 ```
 
-Once configured, Claude Code will have access to all 9 tools and can search library documentation across multiple sources in a single request.
+Once configured, Claude Code will have access to all 10 tools and can search library documentation across multiple sources in a single request.
 
 ## Integration with Other MCP Clients
 
@@ -145,6 +146,7 @@ class MyProvider(BaseProvider):
 ### Built-in Providers
 
 - **PyPI** (`pypi.py`): Fetches Python package metadata from PyPI
+- **npm** (`npm.py`): Fetches JavaScript package metadata from npm registry
 - **Crates.io** (`crates.py`): Searches and retrieves Rust crate metadata from crates.io (respects 1 req/sec rate limit)
 - **GoDocs** (`godocs.py`): Retrieves Go package documentation from godocs.io
 - **Zig** (`zig.py`): Searches Zig programming language documentation
