@@ -7,8 +7,9 @@ import os
 from typing import Any, Callable, Dict, List, Optional
 
 import httpx
+from mcp.types import CallToolResult
 
-from ..utils import USER_AGENT, serialize_response, is_fetch_enabled
+from ..utils import USER_AGENT, serialize_response_with_meta, is_fetch_enabled
 from ..content_utils import convert_relative_urls
 from .base import BaseProvider, ProviderMetadata, ProviderResult
 
@@ -211,19 +212,19 @@ class GitHubProvider(BaseProvider):
 
         async def github_repo_search(
             query: str, limit: int = 5, language: Optional[str] = "Python"
-        ) -> str:
+        ) -> CallToolResult:
             """Search GitHub repositories relevant to a library or topic."""
             result = await self._search_repos(query, limit=limit, language=language)
-            return serialize_response(result)
+            return serialize_response_with_meta(result)
 
         async def github_code_search(
             query: str, repo: Optional[str] = None, limit: int = 5
-        ) -> str:
+        ) -> CallToolResult:
             """Search GitHub code (optionally scoped to a repository)."""
             result = await self._search_code(query, repo=repo, limit=limit)
-            return serialize_response(result)
+            return serialize_response_with_meta(result)
 
-        async def fetch_github_readme(repo: str, max_bytes: int = 20480) -> str:
+        async def fetch_github_readme(repo: str, max_bytes: int = 20480) -> CallToolResult:
             """
             Fetch README and documentation from GitHub repository.
 
@@ -244,11 +245,11 @@ class GitHubProvider(BaseProvider):
                     "size_bytes": 0,
                     "source": None,
                 }
-                return serialize_response(error_result)
+                return serialize_response_with_meta(error_result)
 
             owner, repo_name = parts
             result = await self._fetch_github_readme(owner, repo_name, max_bytes)
-            return serialize_response(result)
+            return serialize_response_with_meta(result)
 
         tools = {
             "github_repo_search": github_repo_search,

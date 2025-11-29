@@ -5,8 +5,9 @@ from __future__ import annotations
 from typing import Any, Callable, Dict, Optional
 
 import httpx
+from mcp.types import CallToolResult
 
-from ..utils import serialize_response, is_fetch_enabled
+from ..utils import serialize_response_with_meta, is_fetch_enabled
 from ..content_utils import convert_rst_to_markdown, extract_sections, prioritize_sections
 from .base import BaseProvider, ProviderMetadata, ProviderResult
 
@@ -144,12 +145,12 @@ class PyPIProvider(BaseProvider):
     def get_tools(self) -> Dict[str, Callable]:
         """Return MCP tool functions."""
 
-        async def pypi_metadata(package: str) -> str:
+        async def pypi_metadata(package: str) -> CallToolResult:
             """Retrieve PyPI package metadata including documentation URLs when available."""
             result = await self._fetch_metadata(package)
-            return serialize_response(result)
+            return serialize_response_with_meta(result)
 
-        async def fetch_pypi_docs(package: str, max_bytes: int = 20480) -> str:
+        async def fetch_pypi_docs(package: str, max_bytes: int = 20480) -> CallToolResult:
             """
             Fetch Python package documentation content from PyPI.
 
@@ -164,7 +165,7 @@ class PyPIProvider(BaseProvider):
                 JSON with content, size, source info
             """
             result = await self._fetch_pypi_docs(package, max_bytes)
-            return serialize_response(result)
+            return serialize_response_with_meta(result)
 
         tools = {"pypi_metadata": pypi_metadata}
         if is_fetch_enabled():

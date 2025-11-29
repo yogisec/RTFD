@@ -6,8 +6,9 @@ from typing import Any, Callable, Dict
 
 import httpx
 from bs4 import BeautifulSoup
+from mcp.types import CallToolResult
 
-from ..utils import serialize_response
+from ..utils import serialize_response_with_meta
 from .base import BaseProvider, ProviderMetadata, ProviderResult
 
 
@@ -36,10 +37,10 @@ class ZigProvider(BaseProvider):
     def get_tools(self) -> Dict[str, Callable]:
         """Return MCP tool functions."""
 
-        async def zig_docs(query: str) -> str:
+        async def zig_docs(query: str) -> CallToolResult:
             """Search Zig language documentation. Returns data in TOON format."""
             result = await self._search_zig_docs(query)
-            return serialize_response(result)
+            return serialize_response_with_meta(result)
 
         return {"zig_docs": zig_docs}
 

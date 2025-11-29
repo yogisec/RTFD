@@ -6,8 +6,9 @@ from typing import Any, Callable, Dict
 
 import httpx
 from bs4 import BeautifulSoup
+from mcp.types import CallToolResult
 
-from ..utils import serialize_response
+from ..utils import serialize_response_with_meta
 from .base import BaseProvider, ProviderMetadata, ProviderResult
 
 
@@ -93,9 +94,9 @@ class GoDocsProvider(BaseProvider):
     def get_tools(self) -> Dict[str, Callable]:
         """Return MCP tool functions."""
 
-        async def godocs_metadata(package: str) -> str:
+        async def godocs_metadata(package: str) -> CallToolResult:
             """Retrieve Go package documentation metadata from godocs.io. Returns data in TOON format."""
             result = await self._fetch_metadata(package)
-            return serialize_response(result)
+            return serialize_response_with_meta(result)
 
         return {"godocs_metadata": godocs_metadata}

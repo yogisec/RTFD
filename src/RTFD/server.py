@@ -11,10 +11,11 @@ from __future__ import annotations
 from typing import Any, Dict
 
 from mcp.server.fastmcp import FastMCP
+from mcp.types import CallToolResult
 
 from .providers import discover_providers
 from .providers.base import BaseProvider
-from .utils import create_http_client, serialize_response
+from .utils import create_http_client, serialize_response_with_meta
 
 # Initialize FastMCP server
 mcp = FastMCP("rtfd-gateway")
@@ -111,12 +112,12 @@ async def _locate_library_docs(library: str, limit: int = 5) -> Dict[str, Any]:
 
 
 @mcp.tool(
-    description="Find docs for a library using PyPI metadata, GitHub repos, and Google search combined. Returns data in TOON format."
+    description="Find docs for a library using PyPI metadata, GitHub repos, and Google search combined. Returns data in JSON or TOON format with token statistics."
 )
-async def search_library_docs(library: str, limit: int = 5) -> str:
+async def search_library_docs(library: str, limit: int = 5) -> CallToolResult:
     """Aggregated library documentation search across all providers."""
     result = await _locate_library_docs(library, limit=limit)
-    return serialize_response(result)
+    return serialize_response_with_meta(result)
 
 
 # Auto-register all provider tools

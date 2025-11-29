@@ -6,8 +6,9 @@ import time
 from typing import Any, Callable, Dict
 
 import httpx
+from mcp.types import CallToolResult
 
-from ..utils import serialize_response
+from ..utils import serialize_response_with_meta
 from .base import BaseProvider, ProviderMetadata, ProviderResult
 
 
@@ -161,14 +162,14 @@ class CratesProvider(BaseProvider):
     def get_tools(self) -> Dict[str, Callable]:
         """Return MCP tool functions."""
 
-        async def search_crates(query: str, limit: int = 5) -> str:
+        async def search_crates(query: str, limit: int = 5) -> CallToolResult:
             """Search for Rust crates on crates.io. Returns data in TOON format."""
             result = await self._search_crates(query, per_page=limit)
-            return serialize_response(result)
+            return serialize_response_with_meta(result)
 
-        async def crates_metadata(crate: str) -> str:
+        async def crates_metadata(crate: str) -> CallToolResult:
             """Get detailed metadata for a Rust crate from crates.io. Returns data in TOON format."""
             result = await self._get_crate_metadata(crate)
-            return serialize_response(result)
+            return serialize_response_with_meta(result)
 
         return {"search_crates": search_crates, "crates_metadata": crates_metadata}

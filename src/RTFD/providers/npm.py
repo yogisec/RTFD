@@ -5,8 +5,9 @@ from __future__ import annotations
 from typing import Any, Callable, Dict
 
 import httpx
+from mcp.types import CallToolResult
 
-from ..utils import serialize_response, is_fetch_enabled
+from ..utils import serialize_response_with_meta, is_fetch_enabled
 from ..content_utils import extract_sections, prioritize_sections
 from .base import BaseProvider, ProviderMetadata, ProviderResult
 
@@ -172,12 +173,12 @@ class NpmProvider(BaseProvider):
     def get_tools(self) -> Dict[str, Callable]:
         """Return MCP tool functions."""
 
-        async def npm_metadata(package: str) -> str:
+        async def npm_metadata(package: str) -> CallToolResult:
             """Retrieve npm package metadata including documentation URLs when available."""
             result = await self._fetch_metadata(package)
-            return serialize_response(result)
+            return serialize_response_with_meta(result)
 
-        async def fetch_npm_docs(package: str, max_bytes: int = 20480) -> str:
+        async def fetch_npm_docs(package: str, max_bytes: int = 20480) -> CallToolResult:
             """
             Fetch npm package documentation content.
 
@@ -191,7 +192,7 @@ class NpmProvider(BaseProvider):
                 JSON with content, size, source info
             """
             result = await self._fetch_npm_docs(package, max_bytes)
-            return serialize_response(result)
+            return serialize_response_with_meta(result)
 
         tools = {"npm_metadata": npm_metadata}
         if is_fetch_enabled():
