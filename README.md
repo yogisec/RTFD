@@ -8,7 +8,7 @@ Model Context Protocol (MCP) server that acts as a gateway for coding agents to 
 - **Format Conversion**: Automatically converts reStructuredText and HTML to Markdown for consistent formatting
 - **Pluggable Architecture**: Easily add new documentation providers by creating a single provider module
 - **Multi-Source Search**: Aggregates results from PyPI, npm, crates.io, GoDocs, Zig docs, GitHub repositories, and GitHub code
-- **Token Counting**: Every response includes token statistics showing JSON vs TOON token usage and potential savings (visible in Claude Code UI, costs 0 tokens)
+- **Token Counting (Optional)**: Track token statistics comparing JSON vs TOON usage (available via `RTFD_TRACK_TOKENS=true`, not enabled by default)
 - **Token Efficient**: Responses can be serialized in TOON format (~30% smaller than JSON) by setting `USE_TOON=true`
 - **Error Resilient**: Provider failures are isolated; one API failure doesn't crash the server
 - **Auto-Discovery**: New providers are automatically discovered and registered
@@ -46,12 +46,12 @@ Model Context Protocol (MCP) server that acts as a gateway for coding agents to 
    Accepted values for disabling: `false`, `0`, `no` (case-insensitive)
 
 6. Configure token counting (optional):
-   By default, token counting is enabled and all tool responses include token statistics in the response metadata (visible in Claude Code UI, costs 0 tokens).
-   To disable token counting for better performance, set `RTFD_TRACK_TOKENS=false`:
+   By default, token counting is disabled. To enable token counting and have all tool responses include token statistics in the response metadata, set `RTFD_TRACK_TOKENS=true`:
    ```bash
-   export RTFD_TRACK_TOKENS=false
+   export RTFD_TRACK_TOKENS=true
    rtfd
    ```
+   Note: Token statistics appear in Claude Code's response metadata logs but are NOT sent to the LLM and cost 0 tokens.
 
 ## Available Tools
 
@@ -188,18 +188,18 @@ Each provider can be extended or replaced without modifying server.py or other p
 
 ## Token Counting
 
-RTFD automatically tracks token consumption for every API call and displays statistics in the response metadata. This feature is designed to help you understand token usage without adding any cost to your LLM.
+RTFD can optionally track token consumption for every API call and include statistics in the response metadata. This feature is designed to help you understand token usage without adding any cost to your LLM.
 
 ### How It Works
 
-- **Token Statistics in Metadata**: Every tool response includes a `meta` field with token statistics
-- **Zero LLM Cost**: Token counts appear in Claude Code's UI but are NOT sent to the LLM (costs 0 tokens)
+- **Token Statistics in Metadata**: When enabled, every tool response includes a `_meta` field with token statistics
+- **Zero LLM Cost**: Token counts are NOT sent to the LLM and only appear in Claude Code's special metadata logs (costs 0 tokens)
 - **JSON vs TOON Comparison**: Shows token count for both formats + potential savings percentage
-- **Always Calculated**: By default, token stats are included on every response
+- **Disabled by Default**: Token counting is disabled by default for better performance
 
 ### What You'll See
 
-When calling any rtfd tool in Claude Code, the response metadata will include:
+When `RTFD_TRACK_TOKENS=true` is set, the response metadata will include:
 
 ```json
 {
@@ -216,22 +216,22 @@ When calling any rtfd tool in Claude Code, the response metadata will include:
 }
 ```
 
-This allows you to see at a glance whether using `USE_TOON=true` would provide meaningful token savings for your workload.
+This metadata appears in Claude Code's response logs/UI but is not visible in the main chat and does not count toward your token usage.
 
 ### Controlling Token Counting
 
-- **Enable (default)**: `RTFD_TRACK_TOKENS=true` - Calculate tokens for both formats on every response
-- **Disable**: `RTFD_TRACK_TOKENS=false` - Only serialize to active format, skip token counting (faster)
+- **Disable (default)**: `RTFD_TRACK_TOKENS=false` - Faster performance, no token stats
+- **Enable**: `RTFD_TRACK_TOKENS=true` - Include token statistics in response metadata
 
-Disable token counting if you experience performance issues or don't need the statistics:
+Enable token counting if you want to understand token usage patterns:
 ```bash
-export RTFD_TRACK_TOKENS=false
+export RTFD_TRACK_TOKENS=true
 rtfd
 ```
 
 ## Notes
 
-- **Token Counting:** By default, RTFD calculates token statistics comparing JSON and TOON formats for every response. Statistics appear in response metadata (visible in Claude Code UI but cost 0 tokens to the LLM). Disable with `RTFD_TRACK_TOKENS=false` if you prefer better performance over token stats.
+- **Token Counting:** Disabled by default. Enable with `RTFD_TRACK_TOKENS=true` to include token statistics in response metadata (visible only in Claude Code's special metadata logs, not in main chat, costs 0 tokens to the LLM).
 - **TOON format:** Tool responses can be serialized to TOON (Token-Oriented Object Notation) format, reducing response size by ~30% compared to JSON. TOON is human-readable and lossless. Set `USE_TOON=true` to enable TOON serialization.
 - **Documentation Fetching:** Content fetching tools (`fetch_pypi_docs`, `fetch_npm_docs`, `fetch_github_readme`) are enabled by default. Set `RTFD_FETCH=false` to disable and only use metadata tools.
 - **Rate Limiting:** crates.io provider respects the 1 request/second rate limit enforced by crates.io.

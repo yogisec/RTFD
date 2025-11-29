@@ -10,7 +10,7 @@ This directory describes how the codebase is organized and how the MCP server be
 - HTML parsing: `BeautifulSoup` for Google result-card scraping.
 - Data model: `SearchResult` dataclass for Google hits; other responses are plain dicts for easy serialization over MCP.
 - Serialization: Tool responses use `serialize_response_with_meta()` from `utils.py`, which returns `CallToolResult` objects. Format is configurable via `USE_TOON` environment variable (defaults to JSON, optionally TOON for ~30% token reduction).
-- Token counting: Responses include token statistics in the `meta` field when `RTFD_TRACK_TOKENS=true` (default). Shows both JSON and TOON token counts for comparison.
+- Token counting: Optional token statistics in the `meta` field (disabled by default). Enable with `RTFD_TRACK_TOKENS=true` to see JSON vs TOON token counts for comparison.
 
 ## Tool behavior
 
@@ -58,7 +58,7 @@ Tool responses are handled by `serialize_response_with_meta()` in `utils.py`:
 
 - **Format selection**: Controlled by `USE_TOON` environment variable (defaults to `false` for JSON).
 - **TOON format**: When `USE_TOON=true`, uses the `toonify` library to achieve ~30% token reduction compared to JSON, particularly effective for arrays of uniform objects (e.g., search results).
-- **Token statistics**: When `RTFD_TRACK_TOKENS=true` (default), the response includes a `meta` field with token counts:
+- **Token statistics**: When `RTFD_TRACK_TOKENS=true`, the response includes a `_meta` field with token counts:
   - `tokens_json`: Token count for JSON format
   - `tokens_toon`: Token count for TOON format
   - `tokens_sent`: Actual tokens sent in the response
@@ -67,8 +67,8 @@ Tool responses are handled by `serialize_response_with_meta()` in `utils.py`:
   - `savings_percent`: Percentage of tokens saved
   - `bytes_json` / `bytes_toon`: Byte sizes for comparison
 - **Token counting**: Uses `tiktoken` library with `cl100k_base` encoding (compatible with Claude models).
-- **Zero-cost metadata**: Token statistics appear in the `meta` field of `CallToolResult`, which is visible to the client but NOT sent to the LLM, costing 0 tokens.
-- **Performance**: Disable token tracking with `RTFD_TRACK_TOKENS=false` to skip double-serialization overhead.
+- **Zero-cost metadata**: Token statistics appear in the `_meta` field of `CallToolResult`, which is visible in Claude Code's special metadata logs but NOT sent to the LLM, costing 0 tokens.
+- **Disabled by default**: Token tracking is disabled by default (set `RTFD_TRACK_TOKENS=false` by default). Enable with `RTFD_TRACK_TOKENS=true` to see token statistics.
 
 Example: A result with 2 GitHub repos in TOON vs JSON:
 ```
@@ -84,7 +84,7 @@ github_repos[2]{name,stars,url}:
 ## Environment Variables
 
 - `USE_TOON` (default: `false`): Set to `true` to enable TOON format serialization for ~30% token reduction.
-- `RTFD_TRACK_TOKENS` (default: `true`): Set to `false` to disable token counting and skip the metadata overhead.
+- `RTFD_TRACK_TOKENS` (default: `false`): Set to `true` to enable token counting with metadata overhead. Token statistics appear in `_meta` field but not in LLM chat.
 - `RTFD_FETCH` (default: `true`): Set to `false` to disable documentation content fetching (only metadata will be returned).
 - `GITHUB_TOKEN`: Optional GitHub personal access token for higher API rate limits.
 - `GOOGLE_API_KEY` + `GOOGLE_CSE_ID`: Optional credentials for Google Custom Search API (used by some tools).
@@ -104,8 +104,8 @@ github_repos[2]{name,stars,url}:
   4. The return type should be `-> CallToolResult`
 - The `serialize_response_with_meta()` function automatically handles:
   - Format selection (JSON vs TOON based on `USE_TOON`)
-  - Token counting (if `RTFD_TRACK_TOKENS=true`)
-  - Metadata attachment to the response
+  - Token counting (if `RTFD_TRACK_TOKENS=true`; disabled by default)
+  - Metadata attachment to the response (in `_meta` field, not sent to LLM)
 - Adjust headers/timeouts in `_http_client()` to fit hosted environments (proxies, corp networks).
 - Modify search heuristics (e.g., language scoping, result limits) in the existing tool functions.
 

@@ -59,13 +59,13 @@ def serialize_response_with_meta(data: Any) -> CallToolResult:
     """
     Convert data to CallToolResult with optional token statistics in _meta.
 
-    When RTFD_TRACK_TOKENS=true (default), serializes to both JSON and TOON
-    to calculate comparative stats. When false, only serializes to active format.
+    When RTFD_TRACK_TOKENS=true, serializes to both JSON and TOON
+    to calculate comparative stats. When false (default), only serializes to active format.
 
     Returns format specified by USE_TOON environment variable.
 
-    Token statistics are included in _meta field, which is visible in
-    Claude Code but NOT sent to the LLM (costs 0 tokens).
+    Token statistics are included in _meta field, which is NOT sent to the LLM
+    and only visible in Claude Code's special logs/metadata (set RTFD_TRACK_TOKENS=true to enable).
 
     Args:
         data: Python object to serialize (dict, list, etc.)
@@ -73,10 +73,10 @@ def serialize_response_with_meta(data: Any) -> CallToolResult:
     Returns:
         CallToolResult with:
           - content: Serialized data in active format
-          - _meta: Token statistics comparing JSON vs TOON (if tracking enabled)
+          - _meta: Token statistics comparing JSON vs TOON (only if tracking enabled)
     """
     use_toon = os.getenv("USE_TOON", "false").lower() == "true"
-    track_tokens = os.getenv("RTFD_TRACK_TOKENS", "true").lower() == "true"
+    track_tokens = os.getenv("RTFD_TRACK_TOKENS", "false").lower() == "true"
 
     active_format = "toon" if use_toon else "json"
 
