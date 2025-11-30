@@ -1,5 +1,9 @@
 # ![RTFD Logo](logo.png) RTFD (Read The F*****g Docs) MCP Server
 
+[![Tests](https://github.com/aserper/RTFD/actions/workflows/test.yml/badge.svg)](https://github.com/aserper/RTFD/actions/workflows/test.yml)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/downloads/)
+[![PyPI](https://img.shields.io/pypi/v/rtfd)](https://pypi.org/project/rtfd/)
+
 The RTFD (Read The F*****g Docs) MCP Server acts as a bridge between Large Language Models (LLMs) and real-time documentation. It allows coding agents to query package repositories like PyPI, npm, crates.io, GoDocs, DockerHub, and GitHub to retrieve the most up-to-date documentation and context.
 
 This server solves a common problem where LLMs hallucinate APIs or provide outdated code examples because their training data is months or years old. By giving agents access to the actual documentation, RTFD ensures that generated code is accurate and follows current best practices.
