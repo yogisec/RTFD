@@ -1,5 +1,5 @@
 """
-MCP gateway server that surfaces library documentation by querying Google, GitHub, PyPI, and GoDocs.
+MCP gateway server that surfaces library documentation by querying GitHub, PyPI, and GoDocs.
 
 The server uses a pluggable provider architecture with auto-discovery. Providers are loaded
 from the providers/ directory and can optionally expose individual MCP tools or participate
@@ -78,7 +78,7 @@ async def _locate_library_docs(library: str, limit: int = 5) -> Dict[str, Any]:
     """
     Try to find documentation links for a given library using all available providers.
 
-    This is the aggregator function that combines results from PyPI, GoDocs, GitHub, and Google.
+    This is the aggregator function that combines results from PyPI, GoDocs, and GitHub.
     """
     result: Dict[str, Any] = {"library": library}
     providers = _get_provider_instances()
@@ -99,7 +99,6 @@ async def _locate_library_docs(library: str, limit: int = 5) -> Dict[str, Any]:
                 "pypi": "pypi",
                 "godocs": "godocs",
                 "github": "github_repos",
-                "google": "web",
             }
             result_key = key_mapping.get(provider_name, provider_name)
             result[result_key] = provider_result.data
@@ -112,7 +111,7 @@ async def _locate_library_docs(library: str, limit: int = 5) -> Dict[str, Any]:
 
 
 @mcp.tool(
-    description="Find docs for a library using PyPI metadata, GitHub repos, and Google search combined. Returns data in JSON or TOON format with token statistics."
+    description="Find docs for a library using PyPI metadata and GitHub repos combined. Returns data in JSON or TOON format with token statistics."
 )
 async def search_library_docs(library: str, limit: int = 5) -> CallToolResult:
     """Aggregated library documentation search across all providers."""

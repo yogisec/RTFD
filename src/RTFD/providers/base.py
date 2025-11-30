@@ -14,7 +14,7 @@ class ProviderMetadata:
     """Metadata describing a provider's capabilities and configuration."""
 
     # Identity
-    name: str  # e.g., "pypi", "github", "google"
+    name: str  # e.g., "pypi", "github"
     description: str  # Human-readable description
 
     # MCP tool exposure control
