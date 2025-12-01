@@ -35,12 +35,36 @@ def mock_html_content():
     """
 
 
+@pytest.fixture
+def mock_html_with_docs():
+    """Return mock HTML content with more detailed documentation."""
+    return """
+    <html>
+        <head>
+            <meta name="description" content="A Go package for testing">
+        </head>
+        <body>
+            <h2 id="pkg-overview">Overview</h2>
+            <p>import "github.com/user/package"</p>
+            <p>Package testing provides support for automated testing of Go packages.</p>
+            <div id="main" class="main">
+                <h2>Functions</h2>
+                <p>func TestExample(t *testing.T)</p>
+                <p>TestExample tests basic functionality.</p>
+            </div>
+        </body>
+    </html>
+    """
+
+
 def test_godocs_metadata_structure(provider):
     """Test GoDocs provider metadata."""
     metadata = provider.get_metadata()
     assert metadata.name == "godocs"
     assert metadata.supports_library_search is True
     assert "godocs_metadata" in metadata.tool_names
+    # fetch_godocs_docs should be included when fetch is enabled
+    assert "fetch_godocs_docs" in metadata.tool_names
 
 
 @pytest.mark.asyncio
@@ -159,3 +183,98 @@ async def test_godocs_fallback_description(provider):
 
     data = await provider._fetch_metadata("pkg")
     assert data["summary"] == "This is the fallback description."
+
+
+@pytest.mark.asyncio
+async def test_fetch_godocs_docs_success(mock_html_with_docs):
+    """Test successful fetching of GoDocs documentation."""
+    mock_response = MagicMock()
+    mock_response.text = mock_html_with_docs
+
+    mock_client = AsyncMock()
+    mock_client.get.return_value = mock_response
+    mock_client.__aenter__.return_value = mock_client
+    mock_client.__aexit__.return_value = None
+
+    async def mock_factory():
+        return mock_client
+
+    provider = GoDocsProvider(mock_factory)
+
+    result = await provider._fetch_godocs_docs("github.com/user/package")
+
+    assert result["package"] == "github.com/user/package"
+    assert result["content"] != ""
+    assert "Package testing" in result["content"]
+    assert result["source"] == "godocs"
+    assert result["truncated"] is False
+
+
+@pytest.mark.asyncio
+async def test_fetch_godocs_docs_with_max_bytes(mock_html_with_docs):
+    """Test documentation fetching with byte limit."""
+    mock_response = MagicMock()
+    mock_response.text = mock_html_with_docs
+
+    mock_client = AsyncMock()
+    mock_client.get.return_value = mock_response
+    mock_client.__aenter__.return_value = mock_client
+    mock_client.__aexit__.return_value = None
+
+    async def mock_factory():
+        return mock_client
+
+    provider = GoDocsProvider(mock_factory)
+
+    result = await provider._fetch_godocs_docs("github.com/user/package", max_bytes=50)
+
+    assert result["package"] == "github.com/user/package"
+    assert result["size_bytes"] <= 50
+    assert result["source"] == "godocs"
+
+
+@pytest.mark.asyncio
+async def test_fetch_godocs_docs_404(provider):
+    """Test fetching docs for non-existent package."""
+    mock_client = AsyncMock()
+    mock_client.get.side_effect = httpx.HTTPStatusError("404 Not Found", request=None, response=MagicMock(status_code=404))
+    mock_client.__aenter__.return_value = mock_client
+    mock_client.__aexit__.return_value = None
+
+    async def mock_factory():
+        return mock_client
+
+    provider = GoDocsProvider(mock_factory)
+
+    result = await provider._fetch_godocs_docs("nonexistent")
+
+    assert result["package"] == "nonexistent"
+    assert result["content"] == ""
+    assert result["error"] == "Package not found on GoDocs"
+    assert result["source"] is None
+
+
+@pytest.mark.asyncio
+async def test_fetch_godocs_docs_tool(mock_html_with_docs):
+    """Test the fetch_godocs_docs tool."""
+    mock_response = MagicMock()
+    mock_response.text = mock_html_with_docs
+
+    mock_client = AsyncMock()
+    mock_client.get.return_value = mock_response
+    mock_client.__aenter__.return_value = mock_client
+    mock_client.__aexit__.return_value = None
+
+    async def mock_factory():
+        return mock_client
+
+    provider = GoDocsProvider(mock_factory)
+
+    tools = provider.get_tools()
+    assert "fetch_godocs_docs" in tools
+
+    result = await tools["fetch_godocs_docs"]("github.com/user/package")
+
+    assert result.content[0].type == "text"
+    assert "github.com/user/package" in result.content[0].text
+    assert "Package testing" in result.content[0].text

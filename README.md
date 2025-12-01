@@ -92,6 +92,7 @@ All tool responses are returned in JSON format by default, or TOON if configured
 ### Documentation Content Fetching
 *   `fetch_pypi_docs(package, max_bytes=20480)`: Fetch Python package documentation from PyPI.
 *   `fetch_npm_docs(package, max_bytes=20480)`: Fetch npm package documentation.
+*   `fetch_godocs_docs(package, max_bytes=20480)`: Fetch Go package documentation from godocs.io (e.g., 'github.com/gorilla/mux').
 *   `fetch_github_readme(repo, max_bytes=20480)`: Fetch README from a GitHub repository (format: "owner/repo").
 *   `fetch_docker_image_docs(image, max_bytes=20480)`: Fetch Docker image documentation and description from DockerHub (e.g., "nginx", "postgres", "user/image").
 *   `fetch_dockerfile(image)`: Fetch the Dockerfile for a Docker image by parsing its description for GitHub links (best-effort).
