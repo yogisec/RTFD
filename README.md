@@ -1,9 +1,10 @@
 # ![RTFD Logo](logo.png) RTFD (Read The F*****g Docs) MCP Server
 
 [![Tests](https://github.com/aserper/rtfd/actions/workflows/test.yml/badge.svg)](https://github.com/aserper/rtfd/actions/workflows/test.yml)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/downloads/)
+[![Supported Python versions](https://img.shields.io/badge/supported%20python%20versions-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/aserper/rtfd.svg?style=social)](https://github.com/aserper/rtfd)
+[![GitHub forks](https://img.shields.io/github/forks/aserper/rtfd.svg?style=social)](https://github.com/aserper/rtfd/fork)
 
 The RTFD (Read The F*****g Docs) MCP Server acts as a bridge between Large Language Models (LLMs) and real-time documentation. It allows coding agents to query package repositories like PyPI, npm, crates.io, GoDocs, DockerHub, and GitHub to retrieve the most up-to-date documentation and context.
 
