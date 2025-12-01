@@ -5,10 +5,25 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "rtfd"
 version = "0.1.0"
-description = "MCP gateway server for library documentation search (Google, GitHub, PyPI)."
-authors = [{ name = "Doc MCP" }]
+description = "MCP server for real-time library documentation access across multiple package ecosystems."
+authors = [{ name = "Amit Serper", email = "amit@example.com" }]
+license = { text = "MIT" }
 readme = "README.md"
 requires-python = ">=3.10"
+keywords = ["mcp", "documentation", "pypi", "npm", "crates", "godocs", "docker", "github"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Tools",
+]
 dependencies = [
     "mcp>=1.22.0",
     "httpx>=0.28.1",
@@ -17,6 +32,12 @@ dependencies = [
     "docutils>=0.22.3",
     "tiktoken>=0.12.0"
 ]
+
+[project.urls]
+Homepage = "https://github.com/aserper/RTFD"
+Repository = "https://github.com/aserper/RTFD.git"
+Issues = "https://github.com/aserper/RTFD/issues"
+Documentation = "https://github.com/aserper/RTFD#readme"
 
 [project.scripts]
 rtfd = "RTFD.server:run"
