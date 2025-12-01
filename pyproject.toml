@@ -3,7 +3,7 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "rtfd"
+name = "rtfd-mcp"
 version = "0.1.0"
 description = "MCP server for real-time library documentation access across multiple package ecosystems."
 authors = [{ name = "Amit Serper", email = "amit@example.com" }]
