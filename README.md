@@ -93,6 +93,10 @@ All tool responses are returned in JSON format.
 ### Aggregator
 *   `search_library_docs(library, limit=5)`: Combined lookup across all providers (PyPI, npm, crates.io, GoDocs, GitHub). Note: Zig and DockerHub are accessed via dedicated tools.
 
+### Cache Management
+*   `get_cache_info()`: Get cache statistics including entry count, database size, and location.
+*   `get_cache_entries()`: Get detailed information about all cached items including age, size, and content preview.
+
 ### Documentation Content Fetching
 *   `fetch_pypi_docs(package, max_bytes=20480)`: Fetch Python package documentation from PyPI.
 *   `fetch_npm_docs(package, max_bytes=20480)`: Fetch npm package documentation.
