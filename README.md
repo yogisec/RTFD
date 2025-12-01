@@ -17,25 +17,19 @@ This server solves a common problem where LLMs hallucinate APIs or provide outda
 *   **Privacy:** Unlike cloud-based documentation services, RTFD runs entirely on your local machine. Your queries and the documentation you access never leave your system, ensuring complete privacy and no data collection.
 *   **Universality:** It supports multiple ecosystems including Python, JavaScript/TypeScript, Rust, Go, Zig, Docker, and general GitHub repositories, making it a versatile tool for polyglot development.
 
-## Hypothetical Use Cases
+## Use Cases
 
-Here are a few scenarios where RTFD significantly improves the workflow of an AI coding agent:
+RTFD helps in scenarios like:
 
-### Scenario 1: Updating Legacy Python Code
-You task an agent with refactoring a Python script that uses an old version of `pandas`. The agent needs to know if certain functions have been deprecated in the latest release. Using `fetch_pypi_docs`, the agent retrieves the current `pandas` documentation, identifies the deprecated methods, and finds the recommended replacements, ensuring the refactored code is modern and robust.
+- **Refactoring old code**: Fetch current `pandas` docs to find deprecated methods and their replacements. Instead of guessing what changed, the LLM reads the actual upgrade guide.
 
-### Scenario 2: Exploring a New Rust Crate
-An agent is assisting with a Rust project and needs to integrate a crate it has not encountered before, such as a specific async runtime or utility library. Instead of guessing the API based on general Rust patterns, the agent uses `crates_metadata` and `search_crates` to verify the crate's existence, version, and feature flags. This prevents compile-time errors and ensures the dependency is correctly defined in `Cargo.toml`.
+- **Unfamiliar libraries**: Integrating a Rust crate you've never seen? Look up the exact version, feature flags, and examples directly from the docs instead of guessing the API from general patterns.
 
-### Scenario 3: Using Bleeding-Edge Libraries
-A developer wants to use a library that was released yesterday and is not yet part of the LLM's training data. Without RTFD, the model would likely hallucinate the library's usage. With RTFD, the agent can use `fetch_github_readme` or `github_code_search` to inspect the repository directly, read the latest README, and understand how to implement the new library correctly.
+- **Libraries after training cutoff**: Using a library released after the LLM's training data ends? Fetch the actual README and code examples from GitHub so the LLM can write correct usage instead of hallucinating APIs.
 
-### Scenario 4: Inspecting Docker Base Images
-You are building a containerized application and want to understand how the `python:3.11-slim` image is built to optimize your own Dockerfile. Using `fetch_dockerfile`, the agent retrieves the actual Dockerfile used to build the official image, revealing the underlying Debian version, installed system packages, and environment variables.
+- **Docker optimization**: When optimizing a Dockerfile, inspect the official `python:3.11-slim` image to see exactly what packages and OS layers are included, rather than making assumptions.
 
-### Scenario 5: Auditing Project Dependencies
-
-You want to keep your project's dependencies up to date but don't want to manually check each package registry. You ask an agent to audit your dependencies and identify available updates. Using RTFD, the agent queries PyPI, npm, and other registries to fetch the latest versions for all your key packages. It returns a comprehensive report showing which packages have major, minor, or patch updates available—making it easy to prioritize upgrades based on their scope and impact.
+- **Dependency audits**: Check PyPI, npm, and crates.io for available updates across all your dependencies. The LLM sees the latest versions and can generate an audit report without manually visiting each registry.
 
 ![Dependency audit example](Antigravity.png)
 
