@@ -40,11 +40,13 @@ Thank you for your interest in contributing to RTFD! This document outlines how 
 
 ## Release Process
 
+**⚠️ Note:** Only repository maintainers with access to the `PYPI_API_TOKEN` secret can publish to PyPI. If you're contributing via a fork, please contact the maintainers to create a release.
+
 RTFD uses automated releases to PyPI. Here's how to create a release:
 
-### Option 1: GitHub UI (Recommended)
+### Option 1: GitHub UI (Maintainers Only)
 
-1. Go to your fork/repository on GitHub
+1. Go to the **main repository** on GitHub (not a fork)
 2. Navigate to the **Actions** tab
 3. Select the **"Release to PyPI"** workflow
 4. Click **"Run workflow"** button
@@ -60,7 +62,7 @@ The workflow will:
 - Create a GitHub release
 - Automatically publish to PyPI
 
-### Option 2: GitHub CLI
+### Option 2: GitHub CLI (Maintainers Only)
 
 ```bash
 gh workflow run release.yml -f bump_type=patch
