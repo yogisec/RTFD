@@ -420,10 +420,18 @@ class GcpProvider(BaseProvider):
                 docs_url = service_info["url"]
                 service_name = service_info["name"]
             else:
-                # Try to construct URL from service name
-                service_slug = service.lower().replace(" ", "-").replace("_", "-")
-                docs_url = f"https://cloud.google.com/{service_slug}/docs"
-                service_name = service
+                # Try to search for the service
+                search_results = await self._search_services(service, limit=1)
+                if search_results:
+                    # Use the best match
+                    best_match = search_results[0]
+                    docs_url = best_match["docs_url"]
+                    service_name = best_match["name"]
+                else:
+                    # Try to construct URL from service name as a last resort
+                    service_slug = service.lower().replace(" ", "-").replace("_", "-")
+                    docs_url = f"https://cloud.google.com/{service_slug}/docs"
+                    service_name = service
 
             # Fetch and parse HTML documentation
             headers = {"User-Agent": USER_AGENT}
