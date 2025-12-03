@@ -155,6 +155,9 @@ All tool responses are returned in JSON format.
 *   `search_docker_images(query, limit=5)`: Search for Docker images on DockerHub.
 *   `github_repo_search(query, limit=5, language="Python")`: Search GitHub repositories.
 *   `github_code_search(query, repo=None, limit=5)`: Search code on GitHub.
+*   `list_repo_contents(repo, path="")`: List contents of a directory in a GitHub repository (format: "owner/repo").
+*   `get_file_content(repo, path, max_bytes=102400)`: Get content of a specific file from a GitHub repository.
+*   `get_repo_tree(repo, recursive=False, max_items=1000)`: Get the complete file tree of a GitHub repository.
 
 ## Integration with Claude Code
 

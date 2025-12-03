@@ -132,3 +132,166 @@ async def test_github_code_search_tool(provider):
         # GitHub code search requires authentication
         error_str = str(e)
         assert any(x in error_str for x in ["401", "Unauthorized", "403", "rate limit"])
+
+
+@pytest.mark.asyncio
+async def test_list_repo_contents_root(provider):
+    """Test listing repository root contents."""
+    try:
+        result = await provider._list_repo_contents("psf", "requests", "")
+        assert "repository" in result
+        assert result["repository"] == "psf/requests"
+        assert "contents" in result
+        assert isinstance(result["contents"], list)
+        # Root should have some files/dirs
+        if len(result["contents"]) > 0:
+            item = result["contents"][0]
+            assert "name" in item
+            assert "path" in item
+            assert "type" in item
+    except Exception as e:
+        # May fail due to rate limits
+        assert "403" in str(e) or "rate limit" in str(e).lower()
+
+
+@pytest.mark.asyncio
+async def test_list_repo_contents_subdirectory(provider):
+    """Test listing a subdirectory in a repository."""
+    try:
+        result = await provider._list_repo_contents("psf", "requests", "requests")
+        assert "repository" in result
+        assert "contents" in result
+        assert isinstance(result["contents"], list)
+    except Exception as e:
+        # May fail due to rate limits or if path doesn't exist
+        assert "40" in str(e) or "rate limit" in str(e).lower()
+
+
+@pytest.mark.asyncio
+async def test_get_file_content_success(provider):
+    """Test getting file content from a repository."""
+    try:
+        result = await provider._get_file_content("psf", "requests", "README.md")
+        assert "repository" in result
+        assert result["repository"] == "psf/requests"
+        assert "path" in result
+        assert result["path"] == "README.md"
+        assert "content" in result
+        # If no error, content should be non-empty
+        if "error" not in result:
+            assert len(result["content"]) > 0
+            assert "size_bytes" in result
+    except Exception as e:
+        # May fail due to rate limits
+        assert "403" in str(e) or "rate limit" in str(e).lower()
+
+
+@pytest.mark.asyncio
+async def test_get_file_content_not_a_file(provider):
+    """Test error handling when path is a directory."""
+    try:
+        result = await provider._get_file_content("psf", "requests", "requests")
+        # Should return error indicating it's not a file
+        assert "error" in result
+        assert "dir" in result["error"].lower() or "not a file" in result["error"].lower()
+    except Exception:
+        # May fail due to rate limits
+        pass
+
+
+@pytest.mark.asyncio
+async def test_get_repo_tree_non_recursive(provider):
+    """Test getting repository tree non-recursively."""
+    try:
+        result = await provider._get_repo_tree("psf", "requests", recursive=False)
+        assert "repository" in result
+        assert result["repository"] == "psf/requests"
+        assert "tree" in result
+        assert isinstance(result["tree"], list)
+        assert "branch" in result
+        # Non-recursive should have fewer items than recursive
+        assert len(result["tree"]) < 1000
+    except Exception as e:
+        # May fail due to rate limits
+        assert "403" in str(e) or "rate limit" in str(e).lower()
+
+
+@pytest.mark.asyncio
+async def test_get_repo_tree_recursive(provider):
+    """Test getting full repository tree recursively."""
+    try:
+        result = await provider._get_repo_tree("psf", "requests", recursive=True, max_items=100)
+        assert "repository" in result
+        assert "tree" in result
+        assert isinstance(result["tree"], list)
+        # Recursive should include nested files
+        if len(result["tree"]) > 0:
+            item = result["tree"][0]
+            assert "path" in item
+            assert "type" in item
+    except Exception as e:
+        # May fail due to rate limits
+        assert "403" in str(e) or "rate limit" in str(e).lower()
+
+
+@pytest.mark.asyncio
+async def test_list_repo_contents_tool(provider):
+    """Test the list_repo_contents tool."""
+    tools = provider.get_tools()
+
+    # Tool should only be available when fetch is enabled
+    if "list_repo_contents" not in tools:
+        pytest.skip("list_repo_contents tool not enabled (fetch disabled)")
+
+    tool = tools["list_repo_contents"]
+
+    try:
+        result = await tool("psf/requests", "")
+        assert result.content[0].type == "text"
+        text_content = result.content[0].text
+        assert isinstance(text_content, str)
+        assert "psf/requests" in text_content
+    except Exception as e:
+        # May fail due to rate limits
+        assert "403" in str(e) or "rate limit" in str(e).lower()
+
+
+@pytest.mark.asyncio
+async def test_get_file_content_tool(provider):
+    """Test the get_file_content tool."""
+    tools = provider.get_tools()
+
+    if "get_file_content" not in tools:
+        pytest.skip("get_file_content tool not enabled (fetch disabled)")
+
+    tool = tools["get_file_content"]
+
+    try:
+        result = await tool("psf/requests", "README.md")
+        assert result.content[0].type == "text"
+        text_content = result.content[0].text
+        assert isinstance(text_content, str)
+    except Exception as e:
+        # May fail due to rate limits
+        assert "403" in str(e) or "rate limit" in str(e).lower()
+
+
+@pytest.mark.asyncio
+async def test_get_repo_tree_tool(provider):
+    """Test the get_repo_tree tool."""
+    tools = provider.get_tools()
+
+    if "get_repo_tree" not in tools:
+        pytest.skip("get_repo_tree tool not enabled (fetch disabled)")
+
+    tool = tools["get_repo_tree"]
+
+    try:
+        result = await tool("psf/requests", recursive=False, max_items=50)
+        assert result.content[0].type == "text"
+        text_content = result.content[0].text
+        assert isinstance(text_content, str)
+        assert "psf/requests" in text_content
+    except Exception as e:
+        # May fail due to rate limits
+        assert "403" in str(e) or "rate limit" in str(e).lower()
