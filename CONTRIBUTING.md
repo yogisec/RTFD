@@ -36,7 +36,23 @@ Thank you for your interest in contributing to RTFD! This document outlines how 
    git commit -m "fix: resolve issue with X"
    ```
 
-3. Push and create a pull request on GitHub
+3. **Update the CHANGELOG.md**:
+   - Add your changes under the `[Unreleased]` section
+   - Follow the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format
+   - Use categories: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`
+   - Write clear, user-focused descriptions
+   - Example:
+     ```markdown
+     ## [Unreleased]
+
+     ### Added
+     - New feature X that allows users to do Y
+
+     ### Fixed
+     - Issue with Z that caused incorrect behavior
+     ```
+
+4. Push and create a pull request on GitHub
 
 ## Code Quality
 
