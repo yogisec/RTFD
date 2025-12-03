@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 ### Fixed
+
+## [0.2.6] - 2025-12-03
+
+### Added
+
+### Changed
+
+### Fixed
 - Fixed "Invalid control character" error by redirecting all internal logging/prints to stderr to prevent MCP protocol corruption.
 
 ## [0.2.5] - 2025-12-03
@@ -157,7 +165,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Error-resilient design (one provider failure doesn't crash server)
   - Privacy-focused (runs entirely locally, no data collection)
 
-[Unreleased]: https://github.com/aserper/rtfd/compare/v0.2.5...HEAD
+[Unreleased]: https://github.com/aserper/rtfd/compare/v0.2.6...HEAD
+[0.2.6]: https://github.com/aserper/rtfd/compare/v0.2.5...v0.2.6
 [0.2.5]: https://github.com/aserper/rtfd/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/aserper/rtfd/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/aserper/rtfd/compare/v0.2.2...v0.2.3
