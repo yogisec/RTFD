@@ -101,7 +101,18 @@ pip install .
     -   **TTL:** `export RTFD_CACHE_TTL=3600` (default: `604800` seconds / 1 week)
     -   **Location:** `~/.cache/rtfd/cache.db`
 
-- `VERIFIED_BY_PYPI`: Set to `true` to enable PyPI verification checks. When enabled, unverified projects will be blocked unless explicitly allowed. Defaults to `false`.
+## Configuration
+
+RTFD can be configured using the following environment variables:
+
+| Variable | Default | Description |
+| :--- | :--- | :--- |
+| `GITHUB_TOKEN` | `None` | GitHub API token. Highly recommended to increase rate limits (60 -> 5000 requests/hour). |
+| `RTFD_FETCH` | `true` | Enable/disable content fetching tools. Set to `false` to only allow metadata lookups. |
+| `RTFD_CACHE_ENABLED` | `true` | Enable/disable caching. Set to `false` to disable. |
+| `RTFD_CACHE_TTL` | `604800` | Cache time-to-live in seconds (default: 1 week). |
+| `RTFD_TRACK_TOKENS` | `false` | Enable/disable token usage statistics in tool response metadata. |
+| `VERIFIED_BY_PYPI` | `false` | If `true`, only allows fetching documentation for packages verified by PyPI. |
 
 ## Releases & Versioning
 
