@@ -19,7 +19,7 @@ from .utils import create_http_client, serialize_response_with_meta, get_cache_c
 from .cache import CacheManager
 
 # Initialize FastMCP server
-mcp = FastMCP("RTFD")
+mcp = FastMCP("RTFD!")
 
 # Initialize Cache
 _cache_manager = CacheManager()
