@@ -21,9 +21,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Supports Base64 decoding, binary file detection, and safe UTF-8 truncation
 - Renamed MCP server to "RTFD!" for friendlier tool names
   - Tools now appear as `mcp__RTFD!__<tool_name>` instead of `mcp__rtfd-gateway__<tool_name>`
+- Automated changelog management in release workflow
+  - `scripts/update_changelog.py` handles versioning, validation, and release notes extraction
+  - Release workflow now automatically updates CHANGELOG.md, bumps version, and creates release notes
 
 ### Changed
 - GitHub provider now offers comprehensive code exploration beyond just README fetching
+- Release process is now fully automated including changelog updates
+  - Contributors only need to add changes to `[Unreleased]`
+  - Version headers and date stamping are handled automatically by the workflow
 
 ## [0.2.4] - 2025-01-02
 
