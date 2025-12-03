@@ -40,6 +40,9 @@ RTFD helps in scenarios like:
 *   **Smart Section Extraction:** Automatically prioritizes and extracts relevant sections such as "Installation", "Usage", and "API Reference" to reduce noise.
 *   **Format Conversion:** Automatically converts reStructuredText and HTML to Markdown for consistent formatting and easier consumption by LLMs.
 *   **Multi-Source Search:** Aggregates results from PyPI, npm, crates.io, GoDocs, Zig docs, DockerHub, GitHub, and GCP.
+*   **GitHub Repository Browsing:** Browse repository file trees (`list_repo_contents`, `get_repo_tree`) and read source code files (`get_file_content`) directly.
+*   **PyPI Verification:** Optional security feature (`VERIFIED_BY_PYPI`) to ensure packages are verified by PyPI before fetching documentation.
+*   **Smart GCP Search:** Hybrid search approach combining local service mapping with `cloud.google.com` search to find documentation for any Google Cloud service.
 *   **Pluggable Architecture:** Easily add new documentation providers by creating a single provider module.
 *   **Error Resilience:** Failures in one provider do not crash the server; the system is designed to degrade gracefully.
 
@@ -103,30 +106,6 @@ pip install .
 ## Releases & Versioning
 
 For maintainers, see [CONTRIBUTING.md](CONTRIBUTING.md) for the automated release process.
-
-To release a new version:
-
-1. Go to **Actions** tab on GitHub
-2. Select **"Release to PyPI"** workflow
-3. Click **"Run workflow"**
-4. Select version bump type (**patch**, **minor**, or **major**)
-5. Done! The workflow will automatically:
-   - Validate that `[Unreleased]` changes exist in `CHANGELOG.md`
-   - Move `[Unreleased]` changes to a new version section with date stamp
-   - Update comparison links
-   - Bump version in `pyproject.toml` and `__init__.py`
-   - Create a git tag and commit
-   - Create a GitHub release with formatted notes
-   - Publish to PyPI
-
-For local testing (dry run):
-```bash
-# Check if changelog is ready
-python scripts/update_changelog.py check
-
-# Preview changelog update (dry run)
-python scripts/update_changelog.py update patch
-```
 
 ## Available Tools
 
