@@ -75,8 +75,8 @@ def _register_provider_tools() -> None:
             # Extract description from docstring
             description = tool_fn.__doc__ or f"{provider_name} tool"
 
-            # Wrap the tool function to ensure it's properly decorated
-            decorated_tool = mcp.tool(description=description)(tool_fn)
+            # Decorate and register the tool with FastMCP
+            mcp.tool(description=description)(tool_fn)
 
 
 async def _locate_library_docs(library: str, limit: int = 5) -> Dict[str, Any]:
