@@ -7,11 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-### Changed
-
 ### Fixed
+- Provider tools are now properly registered with MCP, fixing the issue where tools like `get_commit_diff`, `list_repo_contents`, `get_file_content`, and `get_repo_tree` were not appearing in the tools list
 
 ## [0.3.0] - 2025-12-03
 
