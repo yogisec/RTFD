@@ -85,7 +85,7 @@ known-first-party = ["RTFD"]
 quote-style = "double"
 indent-style = "space"
 line-ending = "auto"
-
+exclude = ["PLC0415"]
 [dependency-groups]
 dev = [
     "ruff>=0.14.8",
