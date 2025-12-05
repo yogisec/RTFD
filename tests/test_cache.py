@@ -1,7 +1,9 @@
 """Tests for CacheManager."""
 
 import time
+
 import pytest
+
 from src.RTFD.cache import CacheManager
 
 
@@ -54,8 +56,8 @@ def test_cache_cleanup(cache_manager):
     data = {"foo": "bar"}
 
     # We need to manually insert to control the timestamp
-    import sqlite3
     import json
+    import sqlite3
 
     with sqlite3.connect(cache_manager.db_path) as conn:
         conn.execute(

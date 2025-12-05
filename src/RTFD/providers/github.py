@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import base64
-from typing import Any, Callable, Dict, List, Optional
+from collections.abc import Callable
+from typing import Any
 
 import httpx
 from mcp.types import CallToolResult
 
-from ..utils import USER_AGENT, serialize_response_with_meta, is_fetch_enabled, get_github_token
 from ..content_utils import convert_relative_urls
+from ..utils import USER_AGENT, get_github_token, is_fetch_enabled, serialize_response_with_meta
 from .base import BaseProvider, ProviderMetadata, ProviderResult
 
 
@@ -54,8 +55,8 @@ class GitHubProvider(BaseProvider):
             return ProviderResult(success=False, error=error_msg, provider_name="github")
 
     async def _search_repos(
-        self, query: str, limit: int = 5, language: Optional[str] = "Python"
-    ) -> List[Dict[str, Any]]:
+        self, query: str, limit: int = 5, language: str | None = "Python"
+    ) -> list[dict[str, Any]]:
         """Query GitHub's repository search API."""
         headers = self._get_headers()
 
@@ -72,7 +73,7 @@ class GitHubProvider(BaseProvider):
             resp.raise_for_status()
             payload = resp.json()
 
-        repos: List[Dict[str, Any]] = []
+        repos: list[dict[str, Any]] = []
         for item in payload.get("items", []):
             repos.append(
                 {
@@ -88,8 +89,8 @@ class GitHubProvider(BaseProvider):
         return repos
 
     async def _search_code(
-        self, query: str, repo: Optional[str] = None, limit: int = 5
-    ) -> List[Dict[str, Any]]:
+        self, query: str, repo: str | None = None, limit: int = 5
+    ) -> list[dict[str, Any]]:
         """Search code on GitHub; optionally scoping to a repository."""
         headers = self._get_headers()
 
@@ -107,7 +108,7 @@ class GitHubProvider(BaseProvider):
             resp.raise_for_status()
             payload = resp.json()
 
-        code_hits: List[Dict[str, Any]] = []
+        code_hits: list[dict[str, Any]] = []
         for item in payload.get("items", []):
             code_hits.append(
                 {
@@ -121,7 +122,7 @@ class GitHubProvider(BaseProvider):
                 break
         return code_hits
 
-    def _get_headers(self) -> Dict[str, str]:
+    def _get_headers(self) -> dict[str, str]:
         """Build GitHub API headers with optional auth token."""
         headers = {
             "User-Agent": USER_AGENT,
@@ -135,7 +136,7 @@ class GitHubProvider(BaseProvider):
 
     async def _fetch_github_readme(
         self, owner: str, repo: str, max_bytes: int = 20480
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Fetch README from GitHub repository.
 
@@ -209,12 +210,12 @@ class GitHubProvider(BaseProvider):
             return {
                 "repository": f"{owner}/{repo}",
                 "content": "",
-                "error": f"Failed to fetch README: {str(exc)}",
+                "error": f"Failed to fetch README: {exc!s}",
                 "size_bytes": 0,
                 "source": None,
             }
 
-    async def _list_repo_contents(self, owner: str, repo: str, path: str = "") -> Dict[str, Any]:
+    async def _list_repo_contents(self, owner: str, repo: str, path: str = "") -> dict[str, Any]:
         """
         List contents of a directory in a GitHub repository.
 
@@ -275,12 +276,12 @@ class GitHubProvider(BaseProvider):
                 "repository": f"{owner}/{repo}",
                 "path": path,
                 "contents": [],
-                "error": f"Failed to list contents: {str(exc)}",
+                "error": f"Failed to list contents: {exc!s}",
             }
 
     async def _get_file_content(
         self, owner: str, repo: str, path: str, max_bytes: int = 102400
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Get content of a specific file from a GitHub repository.
 
@@ -359,12 +360,12 @@ class GitHubProvider(BaseProvider):
                 "repository": f"{owner}/{repo}",
                 "path": path,
                 "content": "",
-                "error": f"Failed to get file content: {str(exc)}",
+                "error": f"Failed to get file content: {exc!s}",
             }
 
     async def _get_repo_tree(
         self, owner: str, repo: str, recursive: bool = False, max_items: int = 1000
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Get the full file tree of a GitHub repository.
 
@@ -430,10 +431,10 @@ class GitHubProvider(BaseProvider):
             return {
                 "repository": f"{owner}/{repo}",
                 "tree": [],
-                "error": f"Failed to get repository tree: {str(exc)}",
+                "error": f"Failed to get repository tree: {exc!s}",
             }
 
-    async def _get_commit_diff(self, owner: str, repo: str, base: str, head: str) -> Dict[str, Any]:
+    async def _get_commit_diff(self, owner: str, repo: str, base: str, head: str) -> dict[str, Any]:
         """
         Get the diff between two commits.
 
@@ -480,14 +481,14 @@ class GitHubProvider(BaseProvider):
                 "base": base,
                 "head": head,
                 "diff": "",
-                "error": f"Failed to get diff: {str(exc)}",
+                "error": f"Failed to get diff: {exc!s}",
             }
 
-    def get_tools(self) -> Dict[str, Callable]:
+    def get_tools(self) -> dict[str, Callable]:
         """Return MCP tool functions."""
 
         async def github_repo_search(
-            query: str, limit: int = 5, language: Optional[str] = "Python"
+            query: str, limit: int = 5, language: str | None = "Python"
         ) -> CallToolResult:
             """
             Search for GitHub repositories by keyword or topic.
@@ -513,7 +514,7 @@ class GitHubProvider(BaseProvider):
             return serialize_response_with_meta(result)
 
         async def github_code_search(
-            query: str, repo: Optional[str] = None, limit: int = 5
+            query: str, repo: str | None = None, limit: int = 5
         ) -> CallToolResult:
             """
             Search for code snippets across GitHub or within a specific repository.

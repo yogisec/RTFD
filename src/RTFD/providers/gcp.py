@@ -2,21 +2,21 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, List, Optional
+from collections.abc import Callable
+from typing import Any
 
 import httpx
 from bs4 import BeautifulSoup
 from mcp.types import CallToolResult
 
+from ..content_utils import extract_sections, html_to_markdown, prioritize_sections
 from ..utils import (
     USER_AGENT,
-    serialize_response_with_meta,
-    is_fetch_enabled,
     get_github_token,
+    is_fetch_enabled,
+    serialize_response_with_meta,
 )
-from ..content_utils import html_to_markdown, extract_sections, prioritize_sections
 from .base import BaseProvider, ProviderMetadata, ProviderResult
-
 
 # Mapping of common GCP services to their documentation URLs
 GCP_SERVICE_DOCS = {
@@ -180,7 +180,7 @@ class GcpProvider(BaseProvider):
             # Parsing errors or other issues - silent fail
             return ProviderResult(success=False, error=None, provider_name="gcp")
 
-    def _normalize_service_name(self, query: str) -> Optional[str]:
+    def _normalize_service_name(self, query: str) -> str | None:
         """
         Normalize service name to match our mapping keys.
 
@@ -223,7 +223,7 @@ class GcpProvider(BaseProvider):
 
         return aliases.get(query_lower)
 
-    async def _search_services(self, query: str, limit: int = 5) -> List[Dict[str, Any]]:
+    async def _search_services(self, query: str, limit: int = 5) -> list[dict[str, Any]]:
         """
         Search for GCP services using GitHub API and local mapping.
 
@@ -234,7 +234,7 @@ class GcpProvider(BaseProvider):
         Returns:
             List of matching services with metadata
         """
-        results: List[Dict[str, Any]] = []
+        results: list[dict[str, Any]] = []
 
         # First, check if query matches any known service
         normalized = self._normalize_service_name(query)
@@ -332,7 +332,7 @@ class GcpProvider(BaseProvider):
 
         return results[:limit]
 
-    async def _search_github_googleapis(self, query: str, limit: int = 5) -> List[Dict[str, Any]]:
+    async def _search_github_googleapis(self, query: str, limit: int = 5) -> list[dict[str, Any]]:
         """
         Search googleapis GitHub repository for service definitions.
 
@@ -358,7 +358,7 @@ class GcpProvider(BaseProvider):
             resp.raise_for_status()
             payload = resp.json()
 
-        results: List[Dict[str, Any]] = []
+        results: list[dict[str, Any]] = []
         for item in payload.get("items", []):
             # Extract service name from path (e.g., google/cloud/storage/v1)
             path = item.get("path", "")
@@ -396,7 +396,7 @@ class GcpProvider(BaseProvider):
 
         return results
 
-    def _get_github_headers(self) -> Dict[str, str]:
+    def _get_github_headers(self) -> dict[str, str]:
         """Build GitHub API headers with optional auth token."""
         headers = {
             "User-Agent": USER_AGENT,
@@ -408,7 +408,7 @@ class GcpProvider(BaseProvider):
             headers["Authorization"] = f"token {token}"
         return headers
 
-    async def _search_cloud_google_com(self, query: str, limit: int = 5) -> List[Dict[str, Any]]:
+    async def _search_cloud_google_com(self, query: str, limit: int = 5) -> list[dict[str, Any]]:
         """
         Search cloud.google.com for documentation.
 
@@ -428,7 +428,7 @@ class GcpProvider(BaseProvider):
                 resp.raise_for_status()
                 soup = BeautifulSoup(resp.text, "html.parser")
 
-            results: List[Dict[str, Any]] = []
+            results: list[dict[str, Any]] = []
 
             # Use the robust selector strategy found during testing
             search_links = soup.find_all("a", attrs={"track-type": "search-result"})
@@ -475,7 +475,7 @@ class GcpProvider(BaseProvider):
             # Log error or just return empty? For now return empty to be safe
             return []
 
-    async def _fetch_service_docs(self, service: str, max_bytes: int = 20480) -> Dict[str, Any]:
+    async def _fetch_service_docs(self, service: str, max_bytes: int = 20480) -> dict[str, Any]:
         """
         Fetch documentation for a specific GCP service.
 
@@ -543,22 +543,21 @@ class GcpProvider(BaseProvider):
                 sections = extract_sections(markdown_content)
                 if sections:
                     final_content = prioritize_sections(sections, max_bytes)
-                else:
-                    # No sections found, use raw content with truncation
-                    if len(markdown_content.encode("utf-8")) > max_bytes:
-                        # Simple truncation
-                        encoded = markdown_content.encode("utf-8")[:max_bytes]
-                        # Handle potential multi-byte character splits
-                        while len(encoded) > 0:
-                            try:
-                                final_content = encoded.decode("utf-8")
-                                break
-                            except UnicodeDecodeError:
-                                encoded = encoded[:-1]
-                        else:
-                            final_content = ""
+                # No sections found, use raw content with truncation
+                elif len(markdown_content.encode("utf-8")) > max_bytes:
+                    # Simple truncation
+                    encoded = markdown_content.encode("utf-8")[:max_bytes]
+                    # Handle potential multi-byte character splits
+                    while len(encoded) > 0:
+                        try:
+                            final_content = encoded.decode("utf-8")
+                            break
+                        except UnicodeDecodeError:
+                            encoded = encoded[:-1]
                     else:
-                        final_content = markdown_content
+                        final_content = ""
+                else:
+                    final_content = markdown_content
             else:
                 # No main content found
                 final_content = f"Documentation for {service_name} is available at {docs_url}"
@@ -600,12 +599,12 @@ class GcpProvider(BaseProvider):
             return {
                 "service": service,
                 "content": "",
-                "error": f"Failed to process docs: {str(exc)}",
+                "error": f"Failed to process docs: {exc!s}",
                 "size_bytes": 0,
                 "source": None,
             }
 
-    def get_tools(self) -> Dict[str, Callable]:
+    def get_tools(self) -> dict[str, Callable]:
         """Return MCP tool functions."""
 
         async def search_gcp_services(query: str, limit: int = 5) -> CallToolResult:

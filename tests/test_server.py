@@ -1,10 +1,11 @@
 """Tests for MCP server and aggregator."""
 
-import pytest
 import time
 
-from src.RTFD.server import _get_provider_instances, _locate_library_docs, search_library_docs
+import pytest
+
 from src.RTFD.cache import CacheEntry
+from src.RTFD.server import _get_provider_instances, _locate_library_docs, search_library_docs
 
 
 @pytest.fixture
@@ -161,7 +162,7 @@ async def test_locate_library_docs_uses_cache(monkeypatch):
     mock_cache.set(cache_key, cached_data)
 
     # Patch the global _cache_manager in server.py
-    import src.RTFD.server as server
+    from src.RTFD import server
 
     monkeypatch.setattr(server, "_cache_manager", mock_cache)
 
@@ -186,7 +187,7 @@ async def test_get_cache_info(monkeypatch):
             return {"entry_count": 10, "db_path": "/tmp/test.db", "db_size_bytes": 1024}
 
     # Patch the global _cache_manager in server.py
-    import src.RTFD.server as server
+    from src.RTFD import server
 
     monkeypatch.setattr(server, "_cache_manager", MockCacheManager())
 

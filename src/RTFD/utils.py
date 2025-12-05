@@ -2,16 +2,17 @@
 
 from __future__ import annotations
 
-from typing import Any, Optional
-
-import httpx
 import json
 import os
-import subprocess
 import shutil
-from mcp.types import CallToolResult, TextContent
-from .token_counter import count_tokens
+import subprocess
+from typing import Any
+
+import httpx
 from loguru import logger
+from mcp.types import CallToolResult, TextContent
+
+from .token_counter import count_tokens
 
 USER_AGENT = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
@@ -100,7 +101,7 @@ def serialize_response_with_meta(data: Any) -> CallToolResult:
         # Fallback: still return response, but with error in metadata
         return CallToolResult(
             content=[TextContent(type="text", text=response_text)],
-            _meta={"token_stats": {"error": f"Token counting failed: {str(e)}"}},
+            _meta={"token_stats": {"error": f"Token counting failed: {e!s}"}},
         )
 
 
@@ -119,7 +120,7 @@ def get_cache_config() -> tuple[bool, float]:
     return enabled, ttl
 
 
-def get_github_token() -> Optional[str]:
+def get_github_token() -> str | None:
     """
     Get GitHub token from environment or gh CLI.
 

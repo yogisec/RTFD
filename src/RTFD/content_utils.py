@@ -4,13 +4,11 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import List
 from io import StringIO
 
-from markdownify import markdownify as md
 from docutils.core import publish_parts
 from docutils.writers.html5_polyglot import Writer as HTMLWriter
-
+from markdownify import markdownify as md
 
 # Section priority keywords for smart content extraction
 PRIORITY_KEYWORDS = {
@@ -99,7 +97,7 @@ def convert_rst_to_markdown(rst: str) -> str:
         return rst
 
 
-def extract_sections(markdown: str) -> List[Section]:
+def extract_sections(markdown: str) -> list[Section]:
     """
     Parse Markdown into sections based on headings.
 
@@ -112,10 +110,10 @@ def extract_sections(markdown: str) -> List[Section]:
     if not markdown or not markdown.strip():
         return []
 
-    sections: List[Section] = []
+    sections: list[Section] = []
     lines = markdown.split("\n")
 
-    current_section_lines: List[str] = []
+    current_section_lines: list[str] = []
     current_level = 0
     current_title = ""
 
@@ -195,7 +193,7 @@ def score_section(title: str) -> int:
     return 30  # Default score
 
 
-def prioritize_sections(sections: List[Section], max_bytes: int = 20480) -> str:
+def prioritize_sections(sections: list[Section], max_bytes: int = 20480) -> str:
     """
     Select and combine sections by priority within size limit.
 

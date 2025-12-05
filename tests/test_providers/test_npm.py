@@ -2,8 +2,8 @@
 
 from unittest.mock import AsyncMock, MagicMock
 
-import pytest
 import httpx
+import pytest
 
 from src.RTFD.providers.npm import NpmProvider
 from src.RTFD.utils import create_http_client

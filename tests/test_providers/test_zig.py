@@ -2,8 +2,8 @@
 
 from unittest.mock import AsyncMock, MagicMock
 
-import pytest
 import httpx
+import pytest
 from bs4 import BeautifulSoup
 
 from src.RTFD.providers.zig import ZigProvider

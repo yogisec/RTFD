@@ -1,6 +1,7 @@
 """Integration tests for npm provider using VCR cassettes."""
 
 import pytest
+
 from RTFD.providers.npm import NpmProvider
 from RTFD.utils import create_http_client
 

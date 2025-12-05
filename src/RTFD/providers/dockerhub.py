@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable, Dict
+from collections.abc import Callable
+from typing import Any
 
 import httpx
 from mcp.types import CallToolResult
 
-from ..utils import serialize_response_with_meta, is_fetch_enabled
+from ..utils import is_fetch_enabled, serialize_response_with_meta
 from .base import BaseProvider, ProviderMetadata, ProviderResult
 
 
@@ -36,7 +37,7 @@ class DockerHubProvider(BaseProvider):
         """Not used for DockerHub (images are searched via search_docker_images)."""
         return ProviderResult(success=False, error=None, provider_name="dockerhub")
 
-    async def _search_images(self, query: str, limit: int = 5) -> Dict[str, Any]:
+    async def _search_images(self, query: str, limit: int = 5) -> dict[str, Any]:
         """Search for Docker images on DockerHub.
 
         Args:
@@ -96,11 +97,11 @@ class DockerHubProvider(BaseProvider):
         except Exception as exc:
             return {
                 "query": query,
-                "error": f"Failed to search images: {str(exc)}",
+                "error": f"Failed to search images: {exc!s}",
                 "results": [],
             }
 
-    async def _fetch_image_metadata(self, image: str) -> Dict[str, Any]:
+    async def _fetch_image_metadata(self, image: str) -> dict[str, Any]:
         """Fetch detailed metadata for a Docker image.
 
         Args:
@@ -156,10 +157,10 @@ class DockerHubProvider(BaseProvider):
         except Exception as exc:
             return {
                 "image": image,
-                "error": f"Failed to fetch metadata: {str(exc)}",
+                "error": f"Failed to fetch metadata: {exc!s}",
             }
 
-    async def _fetch_image_docs(self, image: str, max_bytes: int = 20480) -> Dict[str, Any]:
+    async def _fetch_image_docs(self, image: str, max_bytes: int = 20480) -> dict[str, Any]:
         """Fetch documentation for a Docker image.
 
         Args:
@@ -215,12 +216,12 @@ class DockerHubProvider(BaseProvider):
             return {
                 "image": image,
                 "content": "",
-                "error": f"Failed to fetch docs: {str(exc)}",
+                "error": f"Failed to fetch docs: {exc!s}",
                 "size_bytes": 0,
                 "source": None,
             }
 
-    async def _fetch_dockerfile(self, image: str) -> Dict[str, Any]:
+    async def _fetch_dockerfile(self, image: str) -> dict[str, Any]:
         """Fetch Dockerfile for an image by parsing its description for GitHub links.
 
         Args:
@@ -311,11 +312,11 @@ class DockerHubProvider(BaseProvider):
         except Exception as exc:
             return {
                 "image": image,
-                "error": f"Failed to fetch Dockerfile: {str(exc)}",
+                "error": f"Failed to fetch Dockerfile: {exc!s}",
                 "source": None,
             }
 
-    def get_tools(self) -> Dict[str, Callable]:
+    def get_tools(self) -> dict[str, Callable]:
         """Return MCP tool functions."""
 
         async def search_docker_images(query: str, limit: int = 5) -> CallToolResult:

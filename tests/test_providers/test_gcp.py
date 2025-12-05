@@ -1,9 +1,10 @@
 """Tests for GCP provider."""
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from src.RTFD.providers.gcp import GcpProvider, GCP_SERVICE_DOCS
+import pytest
+
+from src.RTFD.providers.gcp import GCP_SERVICE_DOCS, GcpProvider
 from src.RTFD.utils import create_http_client
 
 

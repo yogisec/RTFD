@@ -7,11 +7,11 @@ from __future__ import annotations
 import json
 import os
 import sqlite3
+import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Optional
-import sys
+from typing import Any
 
 
 @dataclass
@@ -21,7 +21,7 @@ class CacheEntry:
     key: str
     data: Any
     timestamp: float
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
 
 class CacheManager:
@@ -29,7 +29,7 @@ class CacheManager:
     Manages a SQLite-based cache for search results.
     """
 
-    def __init__(self, db_path: Optional[str] = None):
+    def __init__(self, db_path: str | None = None):
         """
         Initialize the cache manager.
 
@@ -60,7 +60,7 @@ class CacheManager:
             )
             conn.commit()
 
-    def get(self, key: str) -> Optional[CacheEntry]:
+    def get(self, key: str) -> CacheEntry | None:
         """
         Retrieve an item from the cache.
 
@@ -90,7 +90,7 @@ class CacheManager:
 
         return None
 
-    def set(self, key: str, data: Any, metadata: Optional[Dict[str, Any]] = None) -> None:
+    def set(self, key: str, data: Any, metadata: dict[str, Any] | None = None) -> None:
         """
         Store an item in the cache.
 
@@ -151,7 +151,7 @@ class CacheManager:
             sys.stderr.write(f"Cache cleanup error: {e}\n")
             return 0
 
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """
         Get cache statistics.
 
@@ -176,7 +176,7 @@ class CacheManager:
 
         return stats
 
-    def get_all_entries(self) -> Dict[str, Dict[str, Any]]:
+    def get_all_entries(self) -> dict[str, dict[str, Any]]:
         """
         Get detailed information about all cached entries.
 

@@ -1,6 +1,7 @@
 """Pytest configuration and fixtures for RTFD tests."""
 
 import os
+
 import pytest
 
 

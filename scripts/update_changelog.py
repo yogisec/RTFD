@@ -8,9 +8,9 @@ Handles updating CHANGELOG.md for releases, including:
 - Extracting release notes
 """
 
+import argparse
 import re
 import sys
-import argparse
 from datetime import date
 from pathlib import Path
 
@@ -113,7 +113,7 @@ def update_changelog(bump_type: str, changelog_path: Path) -> str:
     print(f"Updating CHANGELOG for release: {new_version} ({today})")
 
     # 3. Move [Unreleased] to new version
-    new_unreleased_section = """## [Unreleased]
+    new_unreleased_section = f"""## [Unreleased]
 
 ### Added
 
@@ -121,7 +121,7 @@ def update_changelog(bump_type: str, changelog_path: Path) -> str:
 
 ### Fixed
 
-## [{version}] - {date}""".format(version=new_version, date=today)
+## [{new_version}] - {today}"""
 
     replacement = f"{new_unreleased_section}"
     new_content = content.replace("## [Unreleased]", replacement, 1)

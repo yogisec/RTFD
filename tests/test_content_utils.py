@@ -1,15 +1,16 @@
 """Tests for content utilities."""
 
 from unittest.mock import patch
+
 from src.RTFD.content_utils import (
-    html_to_markdown,
+    Section,
+    convert_relative_urls,
     convert_rst_to_markdown,
     extract_sections,
-    Section,
-    score_section,
+    html_to_markdown,
     prioritize_sections,
+    score_section,
     smart_truncate,
-    convert_relative_urls,
 )
 
 

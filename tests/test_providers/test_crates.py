@@ -1,10 +1,10 @@
 """Tests for Crates provider."""
 
-from unittest.mock import AsyncMock, MagicMock, patch
 import time
+from unittest.mock import AsyncMock, MagicMock, patch
 
-import pytest
 import httpx
+import pytest
 
 from src.RTFD.providers.crates import CratesProvider
 from src.RTFD.utils import create_http_client

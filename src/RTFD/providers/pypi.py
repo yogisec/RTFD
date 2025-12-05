@@ -2,14 +2,15 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, Optional
 import os
+from collections.abc import Callable
+from typing import Any
 
 import httpx
 from mcp.types import CallToolResult
 
-from ..utils import serialize_response_with_meta, is_fetch_enabled
 from ..content_utils import convert_rst_to_markdown, extract_sections, prioritize_sections
+from ..utils import is_fetch_enabled, serialize_response_with_meta
 from .base import BaseProvider, ProviderMetadata, ProviderResult
 
 
@@ -63,7 +64,7 @@ class PyPIProvider(BaseProvider):
 
     async def _fetch_metadata(
         self, package: str, ignore_verification: bool = False
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Pull package metadata from the PyPI JSON API."""
         # Check verification if enabled
         if os.getenv("VERIFIED_BY_PYPI", "").lower() == "true" and not ignore_verification:
@@ -94,7 +95,7 @@ class PyPIProvider(BaseProvider):
             "description": info.get("description") or "",
         }
 
-    def _extract_github_url(self, project_urls: Dict[str, str]) -> Optional[str]:
+    def _extract_github_url(self, project_urls: dict[str, str]) -> str | None:
         """Extract GitHub repository URL from project_urls."""
         if not project_urls:
             return None
@@ -109,7 +110,7 @@ class PyPIProvider(BaseProvider):
 
     async def _fetch_pypi_docs(
         self, package: str, max_bytes: int = 20480, ignore_verification: bool = False
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Fetch documentation content for PyPI package.
 
@@ -180,12 +181,12 @@ class PyPIProvider(BaseProvider):
             return {
                 "package": package,
                 "content": "",
-                "error": f"Failed to fetch docs: {str(exc)}",
+                "error": f"Failed to fetch docs: {exc!s}",
                 "size_bytes": 0,
                 "source": None,
             }
 
-    def get_tools(self) -> Dict[str, Callable]:
+    def get_tools(self) -> dict[str, Callable]:
         """Return MCP tool functions."""
 
         async def pypi_metadata(package: str, ignore_verification: bool = False) -> CallToolResult:
