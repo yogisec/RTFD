@@ -298,21 +298,14 @@ async def test_gcp_fetch_with_normalized_name(provider):
 
 def test_gcp_github_headers_without_token(provider):
     """Test GitHub headers generation without token."""
-    import os
-
-    # Temporarily remove token if it exists
-    old_token = os.environ.pop("GITHUB_TOKEN", None)
-
-    try:
+    # Patch get_github_token to return None, ensuring no token is retrieved
+    # even if gh CLI is installed and authenticated
+    with patch("src.RTFD.providers.gcp.get_github_token", return_value=None):
         headers = provider._get_github_headers()
         assert "User-Agent" in headers
         assert "Accept" in headers
         assert "X-GitHub-Api-Version" in headers
         assert "Authorization" not in headers
-    finally:
-        # Restore token if it existed
-        if old_token:
-            os.environ["GITHUB_TOKEN"] = old_token
 
 
 def test_gcp_github_headers_with_token(provider):

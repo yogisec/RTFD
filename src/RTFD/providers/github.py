@@ -8,7 +8,7 @@ from typing import Any, Callable, Dict, List, Optional
 import httpx
 from mcp.types import CallToolResult
 
-from ..utils import USER_AGENT, serialize_response_with_meta, is_fetch_enabled
+from ..utils import USER_AGENT, serialize_response_with_meta, is_fetch_enabled, get_github_token
 from ..content_utils import convert_relative_urls
 from .base import BaseProvider, ProviderMetadata, ProviderResult
 

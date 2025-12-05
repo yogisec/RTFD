@@ -72,8 +72,7 @@ Clone the repository and install:
 ```bash
 git clone https://github.com/aserper/RTFD.git
 cd RTFD
-pip install .
-# or: uv pip install -e .
+uv sync --extra dev
 ```
 
 ## Quickstart
