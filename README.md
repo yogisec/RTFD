@@ -12,6 +12,12 @@ The RTFD (Read The F*****g Docs) MCP Server acts as a bridge between Large Langu
 
 This server solves a common problem where LLMs hallucinate APIs or provide outdated code examples because their training data is months or years old. By giving agents access to the actual documentation, RTFD ensures that generated code is accurate and follows current best practices.
 
+## ⚠️ Security Warning
+
+> **Security Warning**: This MCP server grants agents access to unverified code and content from external sources (GitHub, PyPI, etc.). This introduces significant risks, including **indirect prompt injection** and the potential for malicious code execution, particularly when operating in autonomous or "YOLO" modes. **Use at your own risk.** The maintainers assume no responsibility for any damage or security compromises resulting from the use of this tool.
+>
+> You can mitigate these risks by configuring specific environment variables to restrict functionality. For example, setting `RTFD_FETCH=false` disables all content fetching tools (allowing only metadata lookups), and `VERIFIED_BY_PYPI=true` restricts Python package documentation to only PyPI-verified sources. See the [Configuration](#configuration) section for more details.
+
 ## Why use RTFD?
 
 *   **Accuracy:** Agents can access the latest documentation for libraries, ensuring they use the correct version-specific APIs and avoid deprecated methods.
