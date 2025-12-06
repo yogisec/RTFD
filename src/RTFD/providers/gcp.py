@@ -158,7 +158,7 @@ class GcpProvider(BaseProvider):
             tool_names=tool_names,
             supports_library_search=True,
             required_env_vars=[],
-            optional_env_vars=["GITHUB_TOKEN"],
+            optional_env_vars=["GITHUB_TOKEN", "GITHUB_AUTH"],
         )
 
     async def search_library(self, library: str, limit: int = 5) -> ProviderResult:

@@ -122,21 +122,35 @@ def get_cache_config() -> tuple[bool, float]:
 
 def get_github_token() -> str | None:
     """
-    Get GitHub token from environment or gh CLI.
+    Get GitHub token based on configured authentication method.
 
-    First checks for GITHUB_TOKEN environment variable.
-    If not found, tries to get token from gh CLI if it's installed.
+    Authentication method is configured via GITHUB_AUTH environment variable:
+    - "token": Only use GITHUB_TOKEN environment variable (default)
+    - "cli": Only use gh CLI auth token
+    - "auto": Try GITHUB_TOKEN first, then fall back to gh CLI
+    - "disabled": Disable GitHub authentication entirely
 
     Returns:
-        GitHub token as string or None if not available
+        GitHub token as string or None if not available or disabled
     """
-    # First check environment variable
-    token = os.getenv("GITHUB_TOKEN")
-    if token:
-        return token
+    auth_method = os.getenv("GITHUB_AUTH", "token").lower()
 
-    # If no env var, try gh CLI
-    if shutil.which("gh"):
+    # GitHub authentication disabled
+    if auth_method == "disabled":
+        return None
+
+    # Try token from environment variable
+    if auth_method in ("token", "auto"):
+        token = os.getenv("GITHUB_TOKEN")
+        if token:
+            return token
+        # If method is just "token" and we didn't find one, don't try other methods
+        if auth_method == "token":
+            logger.error("GitHub token not found in environment")
+            return None
+
+    # Try gh CLI if allowed by auth method
+    if auth_method in ("cli", "auto") and shutil.which("gh"):
         try:
             result = subprocess.run(
                 ["gh", "auth", "token"], capture_output=True, text=True, check=False
@@ -144,7 +158,8 @@ def get_github_token() -> str | None:
             if result.returncode == 0 and result.stdout.strip():
                 return result.stdout.strip()
         except Exception:
-            # If gh command fails for any reason, return None
+            # If gh command fails for any reason, continue to return None
             pass
-    logger.error("GitHub token not found")
+
+    logger.error("GitHub token not found via configured methods")
     return None
