@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [0.4.0] - 2025-12-07
+
+### Added
 - Configurable GitHub authentication via `GITHUB_AUTH` environment variable
   - Supports `token` (default), `cli`, `auto`, or `disabled` modes
   - Allows authentication via GitHub CLI (`gh auth token`) without manual token management
@@ -182,7 +190,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Error-resilient design (one provider failure doesn't crash server)
   - Privacy-focused (runs entirely locally, no data collection)
 
-[Unreleased]: https://github.com/aserper/rtfd/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/aserper/rtfd/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/aserper/rtfd/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/aserper/rtfd/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/aserper/rtfd/compare/v0.2.6...v0.3.0
 [0.2.6]: https://github.com/aserper/rtfd/compare/v0.2.5...v0.2.6
