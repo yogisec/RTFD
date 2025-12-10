@@ -86,6 +86,12 @@ docker run -i --rm \
   ghcr.io/aserper/rtfd:latest
 ```
 
+**Available Tags:**
+*   `:latest` - Stable release (updates on new releases)
+*   `:edge` - Development build (updates on push to main)
+*   `:vX.X.X` - Specific version tags
+
+
 ## Quickstart
 
 RTFD is an MCP server that needs to be configured in your AI agent of choice.
