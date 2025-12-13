@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [0.5.0] - 2025-12-13
+
+### Added
 - **Docker Support**: Official Docker container available on GHCR (`ghcr.io/aserper/rtfd`)
   - Runs independently with all dependencies pre-installed
   - Supports all environment variables for configuration
@@ -204,7 +212,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Error-resilient design (one provider failure doesn't crash server)
   - Privacy-focused (runs entirely locally, no data collection)
 
-[Unreleased]: https://github.com/aserper/rtfd/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/aserper/rtfd/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/aserper/rtfd/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/aserper/rtfd/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/aserper/rtfd/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/aserper/rtfd/compare/v0.3.0...v0.3.1
