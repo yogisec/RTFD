@@ -48,6 +48,7 @@ dev = [
     "pytest-cov>=4.0",
     "pytest-recording>=0.13.0",
     "ruff>=0.2.0",
+    "python-semantic-release>=9.0.0",
 ]
 
 [tool.setuptools]
@@ -63,6 +64,11 @@ markers = [
     "integration: marks tests as integration tests (deselect with '-m \"not integration\"')",
     "requires_auth: marks tests that require API authentication",
 ]
+
+[tool.semantic_release]
+version_variables = ["src/RTFD/__init__.py:__version__"]
+version_toml = ["pyproject.toml:project.version"]
+build_command = "python scripts/sync_json_versions.py"
 
 [tool.ruff]
 # Enable pycodestyle (E), Pyflakes (F), isort (I), and more
