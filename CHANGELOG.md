@@ -8,10 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Claude Code Plugin Support**: RTFD is now available as a Claude Code plugin
+  - Plugin marketplace integration with automated discovery and installation
+  - Proper `.claude-plugin/` directory structure with `plugin.json` and `.mcp.json`
+  - MCP server auto-enabled when plugin is installed
+  - Documentation in `PLUGIN.md` with installation and configuration instructions
 
 ### Changed
+- Updated installation instructions to highlight Claude Code plugin as the recommended method for Claude Code users
+- Reorganized plugin files to follow Claude Code conventions (`.claude-plugin/` directory)
+- Enhanced `bump_version.py` script to automatically update plugin versions during releases
 
 ### Fixed
+- Fixed `bump_version.py` regex to only update project version in `[project]` section (prevents accidentally modifying `target-version` in `[tool.ruff]`)
+- Fixed plugin schema validation issues in `plugin.json` and `marketplace.json`
+- Corrected `ruff` target-version configuration from semantic version to Python version variant (`py310`)
+- Added `.coverage` to `.gitignore` to prevent test artifacts from being committed
+- Corrected Claude Code plugin installation instructions to use correct marketplace name `rtfd-marketplace`
 
 ## [0.5.1] - 2025-12-13
 

@@ -23,7 +23,7 @@ claude plugin marketplace add https://github.com/aserper/RTFD
 Once the marketplace is added, install the RTFD plugin:
 
 ```bash
-claude plugin install rtfd-mcp@aserper/RTFD
+claude plugin install rtfd-mcp@rtfd-marketplace
 ```
 
 ### Alternative: Local Installation (For Development)

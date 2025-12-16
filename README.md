@@ -66,7 +66,7 @@ Install RTFD as a Claude Code plugin in two steps:
 claude plugin marketplace add aserper/RTFD
 
 # Step 2: Install the plugin
-claude plugin install rtfd-mcp@aserper/RTFD
+claude plugin install rtfd-mcp@rtfd-marketplace
 ```
 
 For detailed configuration options and installation alternatives, see [PLUGIN.md](PLUGIN.md).
@@ -129,7 +129,7 @@ uv pip install rtfd-mcp
 claude plugin marketplace add aserper/RTFD
 
 # Step 2: Install the plugin
-claude plugin install rtfd-mcp@aserper/RTFD
+claude plugin install rtfd-mcp@rtfd-marketplace
 ```
 
 **Alternative Methods:**
