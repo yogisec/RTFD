@@ -1,16 +1,21 @@
 {
+  "name": "rtfd-marketplace",
+  "owner": {
+    "name": "Amit Serper",
+    "email": "aserper+noreply@github.com"
+  },
   "plugins": [
     {
       "name": "rtfd-mcp",
-      "version": "0.5.1",
+      "source": "./.claude-plugin",
       "description": "MCP server for real-time library documentation access across multiple package ecosystems (PyPI, npm, crates.io, GoDocs, DockerHub, GitHub, GCP, and more).",
-      "author": "Amit Serper",
+      "version": "0.5.1",
+      "author": {
+        "name": "Amit Serper",
+        "email": "aserper+noreply@github.com"
+      },
       "license": "MIT",
       "homepage": "https://github.com/aserper/RTFD",
-      "source": {
-        "type": "github",
-        "repo": "aserper/RTFD"
-      },
       "keywords": [
         "mcp",
         "documentation",
