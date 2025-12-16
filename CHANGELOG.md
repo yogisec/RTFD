@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [0.5.2] - 2025-12-16
+
+### Added
 - **Claude Code Plugin Support**: RTFD is now available as a Claude Code plugin
   - Plugin marketplace integration with automated discovery and installation
   - Proper `.claude-plugin/` directory structure with `plugin.json` and `.mcp.json`
@@ -236,7 +244,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Error-resilient design (one provider failure doesn't crash server)
   - Privacy-focused (runs entirely locally, no data collection)
 
-[Unreleased]: https://github.com/aserper/rtfd/compare/v0.5.1...HEAD
+[Unreleased]: https://github.com/aserper/rtfd/compare/v0.5.2...HEAD
+[0.5.2]: https://github.com/aserper/rtfd/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/aserper/rtfd/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/aserper/rtfd/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/aserper/rtfd/compare/v0.4.0...v0.4.1
