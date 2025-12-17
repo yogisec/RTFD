@@ -3,7 +3,9 @@
 
 import json
 import re
+import sys
 from pathlib import Path
+
 
 def get_current_version() -> str:
     """Get current version from pyproject.toml."""
@@ -17,6 +19,7 @@ def get_current_version() -> str:
         raise ValueError("Could not find version in pyproject.toml")
     return match.group(1)
 
+
 def update_json_file(path: Path, version: str):
     """Update version field in a JSON file."""
     if not path.exists():
@@ -24,30 +27,32 @@ def update_json_file(path: Path, version: str):
         return
 
     content = json.loads(path.read_text())
-    
+
     if "version" in content:
         content["version"] = version
-    
+
     # specialized logic for marketplace.json which has nested plugins
     if "plugins" in content:
         for plugin in content["plugins"]:
             if "version" in plugin:
                 plugin["version"] = version
-                
+
     path.write_text(json.dumps(content, indent=2) + "\n")
     print(f"Updated {path} to version {version}")
+
 
 def main():
     try:
         version = get_current_version()
         print(f"Syncing version {version} from pyproject.toml...")
-        
+
         update_json_file(Path(".claude-plugin/plugin.json"), version)
         update_json_file(Path(".claude-plugin/marketplace.json"), version)
-        
+
     except Exception as e:
         print(f"Error: {e}")
-        exit(1)
+        sys.exit(1)
+
 
 if __name__ == "__main__":
     main()
