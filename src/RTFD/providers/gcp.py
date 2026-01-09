@@ -12,6 +12,7 @@ from mcp.types import CallToolResult
 from ..content_utils import extract_sections, html_to_markdown, prioritize_sections
 from ..utils import (
     USER_AGENT,
+    chunk_and_serialize_response,
     get_github_token,
     is_fetch_enabled,
     serialize_response_with_meta,
@@ -668,7 +669,7 @@ class GcpProvider(BaseProvider):
             Example: fetch_gcp_service_docs("vertex ai") → Returns formatted documentation from cloud.google.com
             """
             result = await self._fetch_service_docs(service, max_bytes)
-            return serialize_response_with_meta(result)
+            return chunk_and_serialize_response(result)
 
         tools = {"search_gcp_services": search_gcp_services}
         if is_fetch_enabled():

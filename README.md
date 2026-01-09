@@ -275,6 +275,7 @@ RTFD can be configured using the following environment variables:
 | `RTFD_CACHE_ENABLED` | `true` | Enable/disable caching. Set to `false` to disable. |
 | `RTFD_CACHE_TTL` | `604800` | Cache time-to-live in seconds (default: 1 week). |
 | `RTFD_TRACK_TOKENS` | `false` | Enable/disable token usage statistics in tool response metadata. |
+| `RTFD_CHUNK_TOKENS` | `2000` | Maximum tokens per response chunk. Set to `0` to disable chunking. Prevents context overflow from large documentation. |
 | `VERIFIED_BY_PYPI` | `false` | If `true`, only allows fetching documentation for packages verified by PyPI. |
 
 ## Releases & Versioning

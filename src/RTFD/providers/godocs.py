@@ -9,7 +9,7 @@ import httpx
 from bs4 import BeautifulSoup
 from mcp.types import CallToolResult
 
-from ..utils import is_fetch_enabled, serialize_response_with_meta
+from ..utils import chunk_and_serialize_response, is_fetch_enabled, serialize_response_with_meta
 from .base import BaseProvider, ProviderMetadata, ProviderResult
 
 
@@ -249,7 +249,7 @@ class GoDocsProvider(BaseProvider):
             Example: fetch_godocs_docs("github.com/gin-gonic/gin") → Returns overview and API docs
             """
             result = await self._fetch_godocs_docs(package, max_bytes)
-            return serialize_response_with_meta(result)
+            return chunk_and_serialize_response(result)
 
         tools = {"godocs_metadata": godocs_metadata}
         if is_fetch_enabled():

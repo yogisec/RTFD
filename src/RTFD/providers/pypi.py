@@ -10,7 +10,7 @@ import httpx
 from mcp.types import CallToolResult
 
 from ..content_utils import convert_rst_to_markdown, extract_sections, prioritize_sections
-from ..utils import is_fetch_enabled, serialize_response_with_meta
+from ..utils import chunk_and_serialize_response, is_fetch_enabled, serialize_response_with_meta
 from .base import BaseProvider, ProviderMetadata, ProviderResult
 
 
@@ -240,7 +240,7 @@ class PyPIProvider(BaseProvider):
             Example: fetch_pypi_docs("requests") → Returns formatted README with installation and usage
             """
             result = await self._fetch_pypi_docs(package, max_bytes, ignore_verification)
-            return serialize_response_with_meta(result)
+            return chunk_and_serialize_response(result)
 
         tools = {"pypi_metadata": pypi_metadata}
         if is_fetch_enabled():

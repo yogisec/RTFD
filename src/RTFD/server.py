@@ -15,6 +15,7 @@ from mcp.server.fastmcp import FastMCP
 from mcp.types import CallToolResult
 
 from .cache import CacheManager
+from .chunking import ChunkingManager
 from .providers import discover_providers
 from .providers.base import BaseProvider
 from .utils import create_http_client, get_cache_config, serialize_response_with_meta
@@ -24,6 +25,9 @@ mcp = FastMCP("RTFD!")
 
 # Initialize Cache
 _cache_manager = CacheManager()
+
+# Initialize Chunking Manager
+_chunking_manager = ChunkingManager()
 
 # Provider instances (initialized on first use)
 _provider_instances: dict[str, BaseProvider] = {}
@@ -164,6 +168,47 @@ async def get_cache_entries() -> CallToolResult:
         "entries": entries,
     }
     return serialize_response_with_meta(result)
+
+
+
+@mcp.tool(
+    description="Retrieve the next chunk of a large response using a continuation token. "
+    "When a response is chunked, it includes a continuation_token. Pass that token here to get the next chunk."
+)
+async def get_next_chunk(continuation_token: str) -> CallToolResult:
+    """
+    Get the next chunk of content from a previous chunked response.
+
+    Args:
+        continuation_token: Token from the 'continuation_token' field in a chunked response
+
+    Returns:
+        Next chunk with updated chunking metadata, or error if token invalid/expired
+    """
+    from .chunking import get_chunk_size
+
+    chunk_size = get_chunk_size()
+
+    if chunk_size == 0:
+        return serialize_response_with_meta({
+            "error": "Chunking is disabled (RTFD_CHUNK_TOKENS=0)"
+        })
+
+    result = _chunking_manager.get_next_chunk(continuation_token, chunk_size)
+
+    if result is None:
+        return serialize_response_with_meta({
+            "error": "Invalid or expired continuation token. Tokens expire after 10 minutes."
+        })
+
+    # Reconstruct the full response with chunking metadata
+    chunk_data = result.copy()
+
+    # Add helpful hint if there are more chunks
+    if chunk_data.get("has_more"):
+        chunk_data["hint"] = f"Call get_next_chunk('{chunk_data['continuation_token']}') for more content"
+
+    return serialize_response_with_meta(chunk_data)
 
 
 # Auto-register all provider tools

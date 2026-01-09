@@ -9,7 +9,7 @@ import httpx
 from mcp.types import CallToolResult
 
 from ..content_utils import extract_sections, prioritize_sections
-from ..utils import is_fetch_enabled, serialize_response_with_meta
+from ..utils import chunk_and_serialize_response, is_fetch_enabled, serialize_response_with_meta
 from .base import BaseProvider, ProviderMetadata, ProviderResult
 
 
@@ -220,7 +220,7 @@ class NpmProvider(BaseProvider):
             Example: fetch_npm_docs("express") → Returns formatted README with installation and usage
             """
             result = await self._fetch_npm_docs(package, max_bytes)
-            return serialize_response_with_meta(result)
+            return chunk_and_serialize_response(result)
 
         tools = {"npm_metadata": npm_metadata}
         if is_fetch_enabled():

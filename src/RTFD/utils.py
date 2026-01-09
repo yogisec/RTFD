@@ -105,6 +105,97 @@ def serialize_response_with_meta(data: Any) -> CallToolResult:
         )
 
 
+def chunk_and_serialize_response(
+    data: dict[str, Any],
+    content_key: str = "content",
+    chunking_manager: Any = None,
+) -> CallToolResult:
+    """
+    Serialize response with automatic chunking for large content.
+
+    If content exceeds the configured chunk size, splits it into chunks
+    and returns the first chunk with a continuation token.
+
+    Args:
+        data: Response data dict (must contain content_key)
+        content_key: Key in data dict that contains the content to chunk
+        chunking_manager: ChunkingManager instance (auto-fetched if None)
+
+    Returns:
+        CallToolResult with first chunk and chunking metadata
+    """
+    from .chunking import get_chunk_size
+
+    chunk_size = get_chunk_size()
+
+    # If chunking is disabled or no content, use normal serialization
+    if chunk_size == 0 or content_key not in data:
+        return serialize_response_with_meta(data)
+
+    # Get chunking manager from server if not provided
+    if chunking_manager is None:
+        try:
+            from . import server
+            chunking_manager = server._chunking_manager
+        except (ImportError, AttributeError):
+            # Fallback if chunking manager not available
+            import sys
+            sys.stderr.write("Warning: chunking_manager not available\n")
+            return serialize_response_with_meta(data)
+
+    content = data.get(content_key, "")
+    if not content or not isinstance(content, str):
+        return serialize_response_with_meta(data)
+
+    # Count tokens in the content
+    content_tokens = count_tokens(content)
+
+    # If content fits in one chunk, no chunking needed
+    if content_tokens <= chunk_size:
+        # Add chunking metadata indicating no chunking was needed
+        result_data = data.copy()
+        result_data["chunking"] = {
+            "is_chunked": False,
+            "tokens_in_content": content_tokens,
+        }
+        return serialize_response_with_meta(result_data)
+
+    # Content needs chunking (chunking_manager should be available at this point)
+
+    # Split content at token boundary
+    from .token_counter import _encoding
+
+    tokens = _encoding.encode(content)
+    first_chunk_tokens = tokens[:chunk_size]
+    remaining_tokens = tokens[chunk_size:]
+
+    first_chunk_content = _encoding.decode(first_chunk_tokens)
+    remaining_content = _encoding.decode(remaining_tokens)
+
+    # Store continuation
+    metadata = {
+        "chunk_number": 1,
+        "total_tokens": content_tokens,
+        "original_data": {k: v for k, v in data.items() if k != content_key},
+    }
+    continuation_token = chunking_manager.store_continuation(remaining_content, metadata)
+
+    # Build response with first chunk
+    result_data = data.copy()
+    result_data[content_key] = first_chunk_content
+    result_data["chunking"] = {
+        "is_chunked": True,
+        "chunk_number": 1,
+        "has_more": True,
+        "continuation_token": continuation_token,
+        "tokens_in_chunk": len(first_chunk_tokens),
+        "remaining_tokens": len(remaining_tokens),
+        "hint": f"Call get_next_chunk('{continuation_token}') for more content",
+    }
+
+    return serialize_response_with_meta(result_data)
+
+
 def get_cache_config() -> tuple[bool, float]:
     """
     Get cache configuration.

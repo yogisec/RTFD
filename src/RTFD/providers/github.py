@@ -10,7 +10,13 @@ import httpx
 from mcp.types import CallToolResult
 
 from ..content_utils import convert_relative_urls
-from ..utils import USER_AGENT, get_github_token, is_fetch_enabled, serialize_response_with_meta
+from ..utils import (
+    USER_AGENT,
+    chunk_and_serialize_response,
+    get_github_token,
+    is_fetch_enabled,
+    serialize_response_with_meta,
+)
 from .base import BaseProvider, ProviderMetadata, ProviderResult
 
 
@@ -772,7 +778,7 @@ class GitHubProvider(BaseProvider):
 
             owner, repo_name = parts
             result = await self._fetch_github_readme(owner, repo_name, max_bytes)
-            return serialize_response_with_meta(result)
+            return chunk_and_serialize_response(result)
 
         async def list_repo_contents(repo: str, path: str = "") -> CallToolResult:
             """

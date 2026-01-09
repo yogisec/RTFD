@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Response Chunking**: Token-based chunking for large documentation responses
+  - Automatically chunks responses exceeding 2000 tokens (configurable via `RTFD_CHUNK_TOKENS`)
+  - Continuation token support allows agents to request additional chunks incrementally
+  - New `get_next_chunk(continuation_token)` tool for retrieving subsequent chunks
+  - Prevents context window overflow from large documentation responses
+  - All `fetch_*_docs` tools now support automatic chunking
+  - Chunked responses include metadata: `is_chunked`, `chunk_number`, `has_more`, `continuation_token`, `tokens_in_chunk`, `remaining_tokens`
+  - Continuation tokens expire after 10 minutes (stored in SQLite with automatic cleanup)
 
 ### Changed
 
