@@ -321,45 +321,6 @@ All tool responses are returned in JSON format.
 *   `get_repo_tree(repo, recursive=False, max_items=1000)`: Get the complete file tree of a GitHub repository.
 *   `get_commit_diff(repo, base, head)`: Get the diff between two commits, branches, or tags.
 
-## Integration with Claude Code
-
-Add the following to your `~/.claude/settings.json`:
-
-```json
-{
-  "mcpServers": {
-    "rtfd": {
-      "command": "rtfd",
-      "env": {
-        "GITHUB_AUTH": "token",
-        "GITHUB_TOKEN": "your_token_here",
-        "RTFD_FETCH": "true"
-      }
-    }
-  }
-}
-```
-
-Or with environment variables:
-
-```json
-{
-  "mcpServers": {
-    "rtfd": {
-      "command": "bash",
-      "args": ["-c", "export GITHUB_AUTH=token && export GITHUB_TOKEN=your_token_here && rtfd"],
-      "type": "stdio"
-    }
-  }
-}
-```
-
-## Pluggable Architecture
-
-The RTFD server uses a modular architecture. Providers are located in `src/RTFD/providers/` and implement the `BaseProvider` interface. New providers are automatically discovered and registered upon server restart.
-
-To add a custom provider, create a new file in the providers directory inheriting from `BaseProvider`, implement the required methods, and the server will pick it up automatically.
-
 ## Provider-Specific Notes
 
 ### GCP (Google Cloud Platform)
