@@ -26,6 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fixed `.mcp.json` to use correct uvx syntax: `uvx --from rtfd-mcp rtfd` (the package is `rtfd-mcp` but the executable is `rtfd`)
+- Removed environment variable defaults from `.mcp.json` that were incompatible with Claude Code's plugin system
+  - Plugin now uses Python package's built-in defaults
+  - Users can customize via `~/.claude/settings.json` global `env` section
+  - Fixes "Missing environment variables" error on plugin installation
 
 ## [0.5.3] - 2025-01-06
 

@@ -62,30 +62,27 @@ If you prefer to configure it manually, add the following to your Claude Code se
 
 ## Configuration
 
-Once installed, you can configure RTFD behavior through environment variables:
-
-- **RTFD_FETCH** (default: `true`): Enable/disable content fetching. Set to `false` to allow only metadata lookups.
-- **VERIFIED_BY_PYPI** (default: `false`): When enabled, restrict Python package documentation to PyPI-verified sources only.
-- **GITHUB_AUTH** (default: `false`): Enable GitHub authentication for higher API rate limits.
-- **GITHUB_TOKEN**: GitHub personal access token for authenticated requests (optional but recommended).
-
-Example configuration in Claude Code:
+Once installed, RTFD works out-of-the-box with sensible defaults. To customize behavior, add environment variables to your `~/.claude/settings.json`:
 
 ```json
 {
-  "plugins": [
-    {
-      "name": "rtfd-mcp",
-      "env": {
-        "RTFD_FETCH": "true",
-        "VERIFIED_BY_PYPI": "false",
-        "GITHUB_AUTH": "false",
-        "GITHUB_TOKEN": "your_token_here"
-      }
-    }
-  ]
+  "env": {
+    "RTFD_FETCH": "true",
+    "VERIFIED_BY_PYPI": "false",
+    "GITHUB_AUTH": "auto",
+    "GITHUB_TOKEN": "your_token_here"
+  }
 }
 ```
+
+**Available environment variables:**
+
+- **RTFD_FETCH** (default: `true`): Enable/disable content fetching. Set to `false` to allow only metadata lookups.
+- **VERIFIED_BY_PYPI** (default: `false`): When enabled, restrict Python package documentation to PyPI-verified sources only.
+- **GITHUB_AUTH** (default: `auto`): GitHub authentication method - `token`, `cli`, `auto`, or `disabled`.
+- **GITHUB_TOKEN**: GitHub personal access token (optional, only needed if using `token` mode).
+
+**Note:** The `auto` mode (recommended) tries `GITHUB_TOKEN` first, then falls back to GitHub CLI authentication, providing the best experience without requiring manual token management.
 
 ## Supported Documentation Sources
 
