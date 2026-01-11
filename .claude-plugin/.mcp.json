@@ -2,7 +2,7 @@
   "mcpServers": {
     "rtfd": {
       "command": "uvx",
-      "args": ["rtfd-mcp"],
+      "args": ["--from", "rtfd-mcp", "rtfd"],
       "env": {
         "RTFD_FETCH": "${RTFD_FETCH:true}",
         "VERIFIED_BY_PYPI": "${VERIFIED_BY_PYPI:false}",

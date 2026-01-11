@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Corrected manual configuration examples to use actual marketplace identifier
 
 ### Fixed
+- Fixed `.mcp.json` to use correct uvx syntax: `uvx --from rtfd-mcp rtfd` (the package is `rtfd-mcp` but the executable is `rtfd`)
 
 ## [0.5.3] - 2025-01-06
 
