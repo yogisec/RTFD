@@ -69,6 +69,8 @@ markers = [
 version_variables = ["src/RTFD/__init__.py:__version__"]
 version_toml = ["pyproject.toml:project.version"]
 build_command = "python scripts/sync_json_versions.py"
+commit_parser = "angular"
+major_on_zero = false
 
 [tool.ruff]
 # Enable pycodestyle (E), Pyflakes (F), isort (I), and more
