@@ -353,6 +353,37 @@ Tool responses are handled by `serialize_response_with_meta()` in `utils.py`:
 *   **Token counting:** Uses `tiktoken` library with `cl100k_base` encoding (compatible with Claude models).
 *   **Zero-cost metadata:** Token statistics appear in the `_meta` field of `CallToolResult`, which is visible in Claude Code's special metadata logs but NOT sent to the LLM, costing 0 tokens.
 
+## Token-Efficient Tool Descriptions
+
+RTFD uses a compact, structured format for MCP tool descriptions to minimize token consumption while preserving semantic clarity. With 29 tools exposed to LLMs, verbose descriptions would consume ~6,000+ tokens per context load. The optimized format reduces this to ~1,500 tokens—a **75% reduction**.
+
+### Design Principles
+
+1. **Terse summaries** - One-line description of what the tool does
+2. **Structured metadata** - `When:`, `Args:`, `Ex:` format for easy parsing
+3. **Inline examples** - Compact parameter examples with actual values
+4. **Cross-references** - `See also:` for related tools instead of verbose explanations
+5. **No redundancy** - Avoid describing response format (LLMs see the actual response)
+
+### Example Format
+
+```python
+"""
+{One-line summary}. For related usage, see other_tool.
+
+When: {brief condition}
+Args: param="example_value", param2=default_value
+Ex: tool_name("arg") → brief result description
+"""
+```
+
+This format provides LLMs with exactly the information needed to:
+- **Understand** when to use the tool
+- **Call** the tool with correct parameters
+- **Interpret** what the response represents
+
+For guidelines on writing tool descriptions, see [Tool Description Guidelines in CONTRIBUTING.md](CONTRIBUTING.md#writing-tool-descriptions).
+
 ## Extensibility & Development
 
 ### Adding Providers
