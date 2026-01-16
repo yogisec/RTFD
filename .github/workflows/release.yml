@@ -42,6 +42,7 @@ jobs:
           uv run semantic-release publish
 
       - name: Publish to PyPI
+        if: hashFiles('dist/*') != ''
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
