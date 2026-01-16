@@ -17,7 +17,7 @@ from ..utils import (
     is_fetch_enabled,
     serialize_response_with_meta,
 )
-from .base import BaseProvider, ProviderMetadata, ProviderResult
+from .base import BaseProvider, ProviderMetadata, ProviderResult, ToolTierInfo
 
 
 class GitHubProvider(BaseProvider):
@@ -38,6 +38,19 @@ class GitHubProvider(BaseProvider):
                 ]
             )
 
+        # Tool tier classification for defer_loading recommendations
+        tool_tiers = {
+            "github_repo_search": ToolTierInfo(tier=1, defer_recommended=False, category="search"),
+            "github_code_search": ToolTierInfo(tier=2, defer_recommended=True, category="search"),
+            "fetch_github_readme": ToolTierInfo(tier=3, defer_recommended=True, category="fetch"),
+            "list_repo_contents": ToolTierInfo(tier=3, defer_recommended=True, category="fetch"),
+            "get_file_content": ToolTierInfo(tier=3, defer_recommended=True, category="fetch"),
+            "get_repo_tree": ToolTierInfo(tier=3, defer_recommended=True, category="fetch"),
+            "get_commit_diff": ToolTierInfo(tier=4, defer_recommended=True, category="fetch"),
+            "list_github_packages": ToolTierInfo(tier=5, defer_recommended=True, category="fetch"),
+            "get_package_versions": ToolTierInfo(tier=5, defer_recommended=True, category="fetch"),
+        }
+
         return ProviderMetadata(
             name="github",
             description="GitHub repository and code search, file browsing, and content fetching",
@@ -46,6 +59,7 @@ class GitHubProvider(BaseProvider):
             supports_library_search=True,
             required_env_vars=[],
             optional_env_vars=["GITHUB_TOKEN", "GITHUB_AUTH"],
+            tool_tiers=tool_tiers,
         )
 
     async def search_library(self, library: str, limit: int = 5) -> ProviderResult:

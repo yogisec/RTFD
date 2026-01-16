@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 from mcp.types import CallToolResult
 
 from ..utils import chunk_and_serialize_response, is_fetch_enabled, serialize_response_with_meta
-from .base import BaseProvider, ProviderMetadata, ProviderResult
+from .base import BaseProvider, ProviderMetadata, ProviderResult, ToolTierInfo
 
 
 class GoDocsProvider(BaseProvider):
@@ -21,6 +21,12 @@ class GoDocsProvider(BaseProvider):
         if is_fetch_enabled():
             tool_names.append("fetch_godocs_docs")
 
+        # Tool tier classification for defer_loading recommendations
+        tool_tiers = {
+            "godocs_metadata": ToolTierInfo(tier=4, defer_recommended=True, category="metadata"),
+            "fetch_godocs_docs": ToolTierInfo(tier=4, defer_recommended=True, category="fetch"),
+        }
+
         return ProviderMetadata(
             name="godocs",
             description="GoDocs package documentation metadata",
@@ -29,6 +35,7 @@ class GoDocsProvider(BaseProvider):
             supports_library_search=True,
             required_env_vars=[],
             optional_env_vars=[],
+            tool_tiers=tool_tiers,
         )
 
     async def search_library(self, library: str, limit: int = 5) -> ProviderResult:

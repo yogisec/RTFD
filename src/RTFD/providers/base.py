@@ -11,6 +11,23 @@ import httpx
 
 
 @dataclass
+class ToolTierInfo:
+    """Tool tier information for defer_loading recommendations.
+    
+    Tiers indicate how commonly used a tool is:
+    - Tier 1 (Core): Always loaded, essential for basic functionality
+    - Tier 2 (Frequent): Commonly used tools
+    - Tier 3 (Regular): Standard tools for common workflows
+    - Tier 4 (Situational): Tools for specific use cases
+    - Tier 5 (Niche): Specialized tools for rare needs
+    - Tier 6 (Admin): Cache and admin utilities
+    """
+    tier: int  # 1-6, lower = more commonly used
+    defer_recommended: bool  # True if tool should be deferred by default
+    category: str  # "search", "metadata", "fetch", "admin"
+
+
+@dataclass
 class ProviderMetadata:
     """Metadata describing a provider's capabilities and configuration."""
 
@@ -28,6 +45,9 @@ class ProviderMetadata:
     # Configuration
     required_env_vars: list[str] = field(default_factory=list)  # e.g., ["GITHUB_TOKEN"]
     optional_env_vars: list[str] = field(default_factory=list)
+
+    # Tool tier information for defer_loading recommendations
+    tool_tiers: dict[str, ToolTierInfo] = field(default_factory=dict)
 
 
 @dataclass

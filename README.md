@@ -278,6 +278,89 @@ RTFD can be configured using the following environment variables:
 | `RTFD_CHUNK_TOKENS` | `2000` | Maximum tokens per response chunk. Set to `0` to disable chunking. Prevents context overflow from large documentation. |
 | `VERIFIED_BY_PYPI` | `false` | If `true`, only allows fetching documentation for packages verified by PyPI. |
 
+## Token Optimization with Deferred Loading
+
+RTFD provides 33 tools across multiple providers. By default, all tool descriptions are loaded into context, consuming ~10-15K tokens. You can reduce this to ~2-3K tokens (~80-85% reduction) using the `defer_loading` feature.
+
+### How It Works
+
+`defer_loading` is a **client-side configuration** that marks tools as discoverable but not initially loaded. When an LLM needs a deferred tool, it's loaded on-demand. RTFD provides tier classifications and a config generator to help you configure this.
+
+### Tool Tier Classification
+
+| Tier | Defer | Category | Tools |
+|------|-------|----------|-------|
+| **1** | No | Core | `search_library_docs`, `github_repo_search` |
+| **2** | Yes | Frequent | `pypi_metadata`, `npm_metadata`, `github_code_search`, `search_docker_images` |
+| **3** | Yes | Regular | `fetch_pypi_docs`, `fetch_npm_docs`, `fetch_github_readme`, `list_repo_contents`, `get_file_content`, `get_repo_tree`, `docker_image_metadata`, `fetch_docker_image_docs`, `search_crates`, `crates_metadata` |
+| **4** | Yes | Situational | `get_commit_diff`, `fetch_dockerfile`, `search_gcp_services`, `fetch_gcp_service_docs`, `godocs_metadata`, `fetch_godocs_docs` |
+| **5** | Yes | Niche | `list_github_packages`, `get_package_versions`, `zig_docs` |
+| **6** | Yes | Admin | `get_cache_info`, `get_cache_entries`, `get_next_chunk` |
+
+**Result**: 2 tools always loaded, 31 tools deferred (~93% token reduction)
+
+### Config Generator CLI
+
+RTFD includes a CLI tool to generate optimized configurations:
+
+```bash
+# Generate Claude Desktop configuration
+rtfd-config --format claude-desktop
+
+# Generate with custom defer tiers (e.g., only defer tiers 4-6)
+rtfd-config --format claude-desktop --defer-tiers 4,5,6
+
+# View tier summary
+rtfd-config --format summary
+
+# List all tools with tier info
+rtfd-config --format tools
+```
+
+### Sample Claude Desktop Configuration
+
+```json
+{
+  "mcpServers": {
+    "rtfd": {
+      "command": "uvx",
+      "args": ["rtfd-mcp"],
+      "type": "mcp_toolset",
+      "default_config": {"defer_loading": true},
+      "configs": {
+        "search_library_docs": {"defer_loading": false},
+        "github_repo_search": {"defer_loading": false}
+      }
+    }
+  }
+}
+```
+
+This configuration keeps the two most essential tools always loaded while deferring everything else.
+
+### Programmatic Access
+
+You can access tier information programmatically:
+
+```python
+from RTFD.config_generator import (
+    get_all_tools_with_tiers,
+    get_tools_by_tier,
+    generate_claude_desktop_config,
+)
+
+# Get all tools with their tier info
+tools = get_all_tools_with_tiers()
+print(tools["search_library_docs"])  # {'tier': 1, 'defer_recommended': False, 'category': 'search'}
+
+# Get tools organized by tier
+by_tier = get_tools_by_tier()
+print(by_tier[1])  # ['github_repo_search', 'search_library_docs']
+
+# Generate config programmatically
+config = generate_claude_desktop_config(defer_tiers=[3, 4, 5, 6])
+```
+
 ## Releases & Versioning
 
 For maintainers, see [CONTRIBUTING.md](CONTRIBUTING.md) for the automated release process.

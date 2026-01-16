@@ -17,7 +17,7 @@ from ..utils import (
     is_fetch_enabled,
     serialize_response_with_meta,
 )
-from .base import BaseProvider, ProviderMetadata, ProviderResult
+from .base import BaseProvider, ProviderMetadata, ProviderResult, ToolTierInfo
 
 # Mapping of common GCP services to their documentation URLs
 GCP_SERVICE_DOCS = {
@@ -152,6 +152,12 @@ class GcpProvider(BaseProvider):
         if is_fetch_enabled():
             tool_names.append("fetch_gcp_service_docs")
 
+        # Tool tier classification for defer_loading recommendations
+        tool_tiers = {
+            "search_gcp_services": ToolTierInfo(tier=4, defer_recommended=True, category="search"),
+            "fetch_gcp_service_docs": ToolTierInfo(tier=4, defer_recommended=True, category="fetch"),
+        }
+
         return ProviderMetadata(
             name="gcp",
             description="Google Cloud Platform API and service documentation",
@@ -160,6 +166,7 @@ class GcpProvider(BaseProvider):
             supports_library_search=True,
             required_env_vars=[],
             optional_env_vars=["GITHUB_TOKEN", "GITHUB_AUTH"],
+            tool_tiers=tool_tiers,
         )
 
     async def search_library(self, library: str, limit: int = 5) -> ProviderResult:

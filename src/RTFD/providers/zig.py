@@ -10,13 +10,18 @@ from bs4 import BeautifulSoup
 from mcp.types import CallToolResult
 
 from ..utils import serialize_response_with_meta
-from .base import BaseProvider, ProviderMetadata, ProviderResult
+from .base import BaseProvider, ProviderMetadata, ProviderResult, ToolTierInfo
 
 
 class ZigProvider(BaseProvider):
     """Provider for Zig language documentation."""
 
     def get_metadata(self) -> ProviderMetadata:
+        # Tool tier classification for defer_loading recommendations
+        tool_tiers = {
+            "zig_docs": ToolTierInfo(tier=5, defer_recommended=True, category="fetch"),
+        }
+
         return ProviderMetadata(
             name="zig",
             description="Zig programming language documentation",
@@ -25,6 +30,7 @@ class ZigProvider(BaseProvider):
             supports_library_search=False,  # Zig docs are not a library/package search
             required_env_vars=[],
             optional_env_vars=[],
+            tool_tiers=tool_tiers,
         )
 
     async def search_library(self, library: str, limit: int = 5) -> ProviderResult:

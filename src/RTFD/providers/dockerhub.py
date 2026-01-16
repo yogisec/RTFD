@@ -9,7 +9,7 @@ import httpx
 from mcp.types import CallToolResult
 
 from ..utils import chunk_and_serialize_response, is_fetch_enabled, serialize_response_with_meta
-from .base import BaseProvider, ProviderMetadata, ProviderResult
+from .base import BaseProvider, ProviderMetadata, ProviderResult, ToolTierInfo
 
 
 class DockerHubProvider(BaseProvider):
@@ -23,6 +23,14 @@ class DockerHubProvider(BaseProvider):
             tool_names.append("fetch_docker_image_docs")
             tool_names.append("fetch_dockerfile")
 
+        # Tool tier classification for defer_loading recommendations
+        tool_tiers = {
+            "search_docker_images": ToolTierInfo(tier=2, defer_recommended=True, category="search"),
+            "docker_image_metadata": ToolTierInfo(tier=3, defer_recommended=True, category="metadata"),
+            "fetch_docker_image_docs": ToolTierInfo(tier=3, defer_recommended=True, category="fetch"),
+            "fetch_dockerfile": ToolTierInfo(tier=4, defer_recommended=True, category="fetch"),
+        }
+
         return ProviderMetadata(
             name="dockerhub",
             description="DockerHub Docker image search and metadata",
@@ -31,6 +39,7 @@ class DockerHubProvider(BaseProvider):
             supports_library_search=False,  # DockerHub search is image-centric, not lib-doc
             required_env_vars=[],
             optional_env_vars=[],
+            tool_tiers=tool_tiers,
         )
 
     async def search_library(self, library: str, limit: int = 5) -> ProviderResult:

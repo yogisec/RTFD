@@ -17,7 +17,7 @@ from mcp.types import CallToolResult
 from .cache import CacheManager
 from .chunking import ChunkingManager
 from .providers import discover_providers
-from .providers.base import BaseProvider
+from .providers.base import BaseProvider, ToolTierInfo
 from .utils import create_http_client, get_cache_config, serialize_response_with_meta
 
 # Initialize FastMCP server
@@ -28,6 +28,14 @@ _cache_manager = CacheManager()
 
 # Initialize Chunking Manager
 _chunking_manager = ChunkingManager()
+
+# Server-level tool tiers for defer_loading recommendations
+SERVER_TOOL_TIERS: dict[str, ToolTierInfo] = {
+    "search_library_docs": ToolTierInfo(tier=1, defer_recommended=False, category="search"),
+    "get_cache_info": ToolTierInfo(tier=6, defer_recommended=True, category="admin"),
+    "get_cache_entries": ToolTierInfo(tier=6, defer_recommended=True, category="admin"),
+    "get_next_chunk": ToolTierInfo(tier=6, defer_recommended=True, category="admin"),
+}
 
 # Provider instances (initialized on first use)
 _provider_instances: dict[str, BaseProvider] = {}
@@ -53,6 +61,22 @@ def _get_provider_instances() -> dict[str, BaseProvider]:
             sys.stderr.write(f"Warning: Failed to initialize provider {name}: {e}\n")
 
     return _provider_instances
+
+
+def get_all_tool_tiers() -> dict[str, ToolTierInfo]:
+    """
+    Get all tool tier information from all providers and server-level tools.
+
+    Returns:
+        Dictionary mapping tool names to their tier information.
+    """
+    all_tiers = dict(SERVER_TOOL_TIERS)
+
+    for provider in _get_provider_instances().values():
+        metadata = provider.get_metadata()
+        all_tiers.update(metadata.tool_tiers)
+
+    return all_tiers
 
 
 def _register_provider_tools() -> None:

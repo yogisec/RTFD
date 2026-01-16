@@ -10,7 +10,7 @@ import httpx
 from mcp.types import CallToolResult
 
 from ..utils import serialize_response_with_meta
-from .base import BaseProvider, ProviderMetadata, ProviderResult
+from .base import BaseProvider, ProviderMetadata, ProviderResult, ToolTierInfo
 
 
 class CratesProvider(BaseProvider):
@@ -28,6 +28,12 @@ class CratesProvider(BaseProvider):
         self._lock = asyncio.Lock()
 
     def get_metadata(self) -> ProviderMetadata:
+        # Tool tier classification for defer_loading recommendations
+        tool_tiers = {
+            "search_crates": ToolTierInfo(tier=3, defer_recommended=True, category="search"),
+            "crates_metadata": ToolTierInfo(tier=3, defer_recommended=True, category="metadata"),
+        }
+
         return ProviderMetadata(
             name="crates",
             description="Rust crates.io package registry metadata",
@@ -36,6 +42,7 @@ class CratesProvider(BaseProvider):
             supports_library_search=True,
             required_env_vars=[],
             optional_env_vars=[],
+            tool_tiers=tool_tiers,
         )
 
     async def search_library(self, library: str, limit: int = 5) -> ProviderResult:

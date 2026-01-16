@@ -10,7 +10,7 @@ from mcp.types import CallToolResult
 
 from ..content_utils import extract_sections, prioritize_sections
 from ..utils import chunk_and_serialize_response, is_fetch_enabled, serialize_response_with_meta
-from .base import BaseProvider, ProviderMetadata, ProviderResult
+from .base import BaseProvider, ProviderMetadata, ProviderResult, ToolTierInfo
 
 
 class NpmProvider(BaseProvider):
@@ -21,6 +21,12 @@ class NpmProvider(BaseProvider):
         if is_fetch_enabled():
             tool_names.append("fetch_npm_docs")
 
+        # Tool tier classification for defer_loading recommendations
+        tool_tiers = {
+            "npm_metadata": ToolTierInfo(tier=2, defer_recommended=True, category="metadata"),
+            "fetch_npm_docs": ToolTierInfo(tier=3, defer_recommended=True, category="fetch"),
+        }
+
         return ProviderMetadata(
             name="npm",
             description="npm package registry metadata and documentation",
@@ -29,6 +35,7 @@ class NpmProvider(BaseProvider):
             supports_library_search=True,
             required_env_vars=[],
             optional_env_vars=[],
+            tool_tiers=tool_tiers,
         )
 
     async def search_library(self, library: str, limit: int = 5) -> ProviderResult:
