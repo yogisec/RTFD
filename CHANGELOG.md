@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Deferred Loading Support**: Tool tier classification for client-side `defer_loading` optimization
+  - New `ToolTierInfo` dataclass for categorizing tools by usage frequency (tiers 1-6)
+  - All 28 tools classified into tiers: Core (1), Frequent (2), Regular (3), Situational (4), Niche (5), Admin (6)
+  - New `rtfd-config` CLI tool for generating optimized MCP client configurations
+  - Supports Claude Desktop and Anthropic API configuration formats
+  - Enables ~93% token reduction by deferring 26 of 28 tools (keeping only `search_library_docs` and `github_repo_search` always loaded)
+  - New `get_all_tool_tiers()` function for programmatic access to tier metadata
 - **Response Chunking**: Token-based chunking for large documentation responses
   - Automatically chunks responses exceeding 2000 tokens (configurable via `RTFD_CHUNK_TOKENS`)
   - Continuation token support allows agents to request additional chunks incrementally
